@@ -29,16 +29,16 @@ public class SpriteView extends GLSurfaceView {
     }
 
     void setSprite(final Sprite sprite) {
-        setRenderer(new GLSpriteRenderer(sprite));
+        setRenderer(new SpriteRenderer(sprite));
         setRenderMode(RENDERMODE_WHEN_DIRTY);
     }
 
 
-    private class GLSpriteRenderer implements GLSurfaceView.Renderer {
+    private class SpriteRenderer implements GLSurfaceView.Renderer {
 
         private Sprite sprite;
 
-        GLSpriteRenderer(Sprite sprite) {
+        SpriteRenderer(Sprite sprite) {
             this.sprite = sprite;
         }
 
