@@ -71,41 +71,45 @@ public class Sprite {
     private FloatBuffer textureBuffer;
     private ShortBuffer drawOrderBuffer;
 
+    private int program;
+
     private int mPositionHandle;
     private int mTextureCoordinateHandle;
     private int mMVPMatrixHandle;
+    private int[] textureHandles;
 
     private final float[] mProjMatrix = new float[16];
     private final float[] mViewMatrix = new float[16];
     private final float[] mModelViewProjMatrix = new float[16];
     private float[] mModelMatrix = new float[16];
 
-    private int viewWidth, viewHeight, imgWidth, imgHeight;
+    private int viewWidth, viewHeight;
 
     //Declare as volatile because we are updating it from another thread
-    volatile float angle, scaleX = 1.f, scaleY = 1.f, transX, transY;
+    volatile float angle, scale = 1.f, transX, transY;
     volatile Bitmap bitmap;
+    private int imgWidth, imgHeight;
 
     Sprite() {
     }
 
-    void onSurfaceCreated(GL10 unused, EGLConfig config) {
+    void onSurfaceCreated() {
         //Prepare byte buffers
         vertexBuffer = GLUtil.prepareFloatBuffer(VERTEX_COORDS);
         textureBuffer = GLUtil.prepareFloatBuffer(TEXTURE_COORDS);
         drawOrderBuffer = GLUtil.prepareShortBuffer(DRAW_ORDER);
 
         //Load shader program
-        final int shaderProgram = GLUtil.loadShader(VERTEX_SHADER_CODE, FRAGMENT_SHADER_CODE);
-        GLES20.glUseProgram(shaderProgram);
+        program = GLUtil.loadShader(VERTEX_SHADER_CODE, FRAGMENT_SHADER_CODE);
+        GLES20.glUseProgram(program);
 
         //Prepare attributes and texture handles
-        mPositionHandle = GLES20.glGetAttribLocation(shaderProgram, "a_Position");
-        mTextureCoordinateHandle = GLES20.glGetAttribLocation(shaderProgram, "a_TexCoordinate");
-        mMVPMatrixHandle = GLES20.glGetUniformLocation(shaderProgram, "u_mvpMatrix");
+        mPositionHandle = GLES20.glGetAttribLocation(program, "a_Position");
+        mTextureCoordinateHandle = GLES20.glGetAttribLocation(program, "a_TexCoordinate");
+        mMVPMatrixHandle = GLES20.glGetUniformLocation(program, "u_mvpMatrix");
 
         // Generate texture2d and set parameters
-        GLUtil.genTexture2d(1);
+        textureHandles = GLUtil.genTexture2d(1);
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_MIRRORED_REPEAT);
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_MIRRORED_REPEAT);
         // https://learnopengl.com/Getting-started/Textures
@@ -128,7 +132,7 @@ public class Sprite {
         Matrix.setLookAtM(mViewMatrix, 0, LOOK_EYE_X, LOOK_EYE_Y, LOOK_EYE_Z, LOOK_CENTER_X, LOOK_CENTER_Y, LOOK_CENTER_Z, LOOK_UP_X, LOOK_UP_Y, LOOK_UP_Z);
     }
 
-    void onSurfaceChanged(GL10 unused, int width, int height) {
+    void onSurfaceChanged(int width, int height) {
         viewWidth = width;
         viewHeight = height;
 
@@ -145,13 +149,20 @@ public class Sprite {
         Matrix.frustumM(mProjMatrix, 0, left, right, bottom, top, near, far);
     }
 
-    void onDrawFrame(GL10 unused) {
+    void onDrawFrame() {
         if (bitmap != null && !bitmap.isRecycled()) {
             imgWidth = bitmap.getWidth();
             imgHeight = bitmap.getHeight();
         }
         updateMatrices();
         draw();
+    }
+
+    void release() {
+        if (program > 0) {
+            GLES20.glDeleteTextures(1, textureHandles, 0);
+            GLES20.glDeleteProgram(program);
+        }
     }
 
     private void updateMatrices() {
@@ -162,15 +173,10 @@ public class Sprite {
         Matrix.rotateM(mModelMatrix, 0, angle, 0, 0, -1.0f);
 
         if (imgWidth > 0 && imgHeight > 0) {
-            float baseScaleX = 1.f, baseScaleY = 1.f;
-            if (viewWidth > viewHeight) {
-                baseScaleX = (float)imgWidth / viewHeight;
-                baseScaleY = (float)imgHeight / viewHeight;
-            } else {
-                baseScaleX = (float)imgWidth / viewWidth;
-                baseScaleY = (float)imgHeight / viewWidth;
-            }
-            Matrix.scaleM(mModelMatrix, 0, baseScaleX * scaleX, baseScaleY * scaleY, 1.0f);
+            int targetSize = Math.min(viewWidth, viewHeight);
+            float baseScaleX = (float)imgWidth / targetSize;
+            float baseScaleY = (float)imgHeight / targetSize;
+            Matrix.scaleM(mModelMatrix, 0, baseScaleX * scale, baseScaleY * scale, 1.0f);
         }
 
         // This multiplies the view matrix by the model matrix, and stores the result in the MVP matrix
@@ -200,4 +206,3 @@ public class Sprite {
         GLES20.glDisableVertexAttribArray(mPositionHandle);
         GLES20.glDisableVertexAttribArray(mTextureCoordinateHandle);
     }
-}
