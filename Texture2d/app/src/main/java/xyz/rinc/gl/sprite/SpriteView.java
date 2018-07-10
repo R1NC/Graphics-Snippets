@@ -12,7 +12,11 @@ import javax.microedition.khronos.opengles.GL10;
  * Created by rincliu on 20180703.
  */
 
-public class SpriteView extends GLSurfaceView {
+public class SpriteView extends GLSurfaceView implements GLSurfaceView.Renderer {
+
+    final ArrayList<Sprite> sprites = new ArrayList<>();
+
+    private int width, height;
 
     public SpriteView(Context context) {
         super(context);
@@ -26,47 +30,60 @@ public class SpriteView extends GLSurfaceView {
 
     private void init() {
         GLUtil.makeSurfaceViewTransparent(this);
-    }
-
-    void setSprite(final Sprite sprite) {
-        setRenderer(new SpriteRenderer(sprite));
+        setRenderer(this);
         setRenderMode(RENDERMODE_WHEN_DIRTY);
     }
 
-
-    private class SpriteRenderer implements GLSurfaceView.Renderer {
-
-        private Sprite sprite;
-
-        SpriteRenderer(Sprite sprite) {
-            this.sprite = sprite;
-        }
-
-        @Override
-        public void onSurfaceCreated(GL10 unused, EGLConfig config) {
-            GLES20.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-
-            if (sprite != null) {
-                sprite.onSurfaceCreated(unused, config);
+    void notifyDataSetChanged() {
+        if (sprites != null) {
+            for (final Sprite sprite : sprites) {
+                // OpenGL API must Run on GLThread
+                queueEvent(new Runnable(){
+                    @Override
+                    public void run() {
+                        sprite.onSurfaceCreated();
+                        sprite.onSurfaceChanged(width, height);
+                    }
+                });
             }
         }
+    }
 
-        @Override
-        public void onSurfaceChanged(GL10 unused, int width, int height) {
-            // Set the OpenGL viewport to the same size as the surface.
-            GLES20.glViewport(0, 0, width, height);
+    @Override
+    public void onSurfaceCreated(GL10 unused, EGLConfig config) {
+        GLES20.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-            if (sprite != null) {
-                sprite.onSurfaceChanged(unused, width, height);
+        if (sprites != null) {
+            for (Sprite sprite : sprites) {
+                sprite.onSurfaceCreated();
             }
         }
+    }
 
-        @Override
-        public void onDrawFrame(GL10 unused) {
-            GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
+    @Override
+    public void onSurfaceChanged(GL10 unused, int width, int height) {
+        // Set the OpenGL viewport to the same size as the surface.
+        GLES20.glViewport(0, 0, width, height);
 
-            if (sprite != null && sprite.bitmap != null) {
-                sprite.onDrawFrame(unused);
+        this.width = width;
+        this.height = height;
+
+        if (sprites != null) {
+            for (Sprite sprite : sprites) {
+                sprite.onSurfaceChanged(width, height);
+            }
+        }
+    }
+
+    @Override
+    public void onDrawFrame(GL10 unused) {
+        GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
+
+        if (sprites != null) {
+            for (Sprite sprite : sprites) {
+                if (sprite.bitmap != null && !sprite.bitmap.isRecycled()) {
+                    sprite.onDrawFrame();
+                }
             }
         }
     }
