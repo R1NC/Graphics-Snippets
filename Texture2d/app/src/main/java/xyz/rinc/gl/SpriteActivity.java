@@ -13,8 +13,7 @@ import xyz.rinc.gl.sprite.SpriteView;
  */
 
 public class SpriteActivity extends AppCompatActivity {
-
-    private SpriteView spriteView;
+    
     private SpritePlayer spritePlayer;
 
     @Override
@@ -24,26 +23,29 @@ public class SpriteActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_sprite);
 
-        spriteView = findViewById(R.id.glssv);
+        SpriteView spriteView = findViewById(R.id.glssv);
         spritePlayer = new SpritePlayer(spriteView);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        spriteView.onResume();
-        spritePlayer.start();
+        spritePlayer.onResume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        spriteView.onPause();
-        spritePlayer.stop();
+        spritePlayer.onPause();
+    }
+    
+    @Override
+    public void onDestroy() {
+        spritePlayer.onDestroy();
+        super.onDestroy();
     }
 
     public void onClickBtn(View v) {
-        spritePlayer.setParameters("love", 2.f);
-        spritePlayer.start();
+        spritePlayer.setParameters("love", 2.f, 1, false);
     }
 }
