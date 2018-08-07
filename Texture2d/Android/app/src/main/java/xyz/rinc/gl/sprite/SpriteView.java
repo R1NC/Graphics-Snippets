@@ -5,12 +5,10 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 
+import java.util.ArrayList;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
-
-/**
- * Created by rincliu on 20180703.
- */
 
 public class SpriteView extends GLSurfaceView implements GLSurfaceView.Renderer {
 

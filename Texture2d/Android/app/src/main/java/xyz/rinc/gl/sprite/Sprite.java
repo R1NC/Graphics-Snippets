@@ -7,13 +7,6 @@ import android.opengl.Matrix;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL10;
-
-/**
- * Created by rincliu on 20180703.
- */
-
 public class Sprite {
 
     private static final String VERTEX_SHADER_CODE = "" +
@@ -191,18 +184,23 @@ public class Sprite {
     private void draw() {
         GLUtil.setBitmap2Texture2d(0, bitmap);
 
-        GLES20.glVertexAttribPointer(mPositionHandle, 3, GLES20.GL_FLOAT, false, 0, vertexBuffer);
-        GLES20.glVertexAttribPointer(mTextureCoordinateHandle, 2, GLES20.GL_FLOAT, false, 0, textureBuffer);
+        try {
+            GLES20.glVertexAttribPointer(mPositionHandle, 3, GLES20.GL_FLOAT, false, 0, vertexBuffer);
+            GLES20.glVertexAttribPointer(mTextureCoordinateHandle, 2, GLES20.GL_FLOAT, false, 0, textureBuffer);
 
-        GLES20.glEnableVertexAttribArray(mPositionHandle);
-        GLES20.glEnableVertexAttribArray(mTextureCoordinateHandle);
+            GLES20.glEnableVertexAttribArray(mPositionHandle);
+            GLES20.glEnableVertexAttribArray(mTextureCoordinateHandle);
 
-        //Apply the projection and view transformation
-        GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mModelViewProjMatrix, 0);
+            //Apply the projection and view transformation
+            GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mModelViewProjMatrix, 0);
 
-        //GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, VERTEX_COORDS.length / 3);
-        GLES20.glDrawElements(GLES20.GL_TRIANGLE_STRIP, DRAW_ORDER.length, GLES20.GL_UNSIGNED_SHORT, drawOrderBuffer);
+            //GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, VERTEX_COORDS.length / 3);
+            GLES20.glDrawElements(GLES20.GL_TRIANGLE_STRIP, DRAW_ORDER.length, GLES20.GL_UNSIGNED_SHORT, drawOrderBuffer);
 
-        GLES20.glDisableVertexAttribArray(mPositionHandle);
-        GLES20.glDisableVertexAttribArray(mTextureCoordinateHandle);
+            GLES20.glDisableVertexAttribArray(mPositionHandle);
+            GLES20.glDisableVertexAttribArray(mTextureCoordinateHandle);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
+}

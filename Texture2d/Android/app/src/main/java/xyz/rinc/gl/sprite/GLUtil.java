@@ -12,13 +12,11 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
-/**
- * Created by rincliu on 20180703.
- */
-
 public class GLUtil {
 
     private static final String TAG = "GLUtil";
+
+    private GLUtil() {}
 
     public static void makeSurfaceViewTransparent(GLSurfaceView glSurfaceView) {
         glSurfaceView.setZOrderOnTop(true);

@@ -8,10 +8,6 @@ import android.view.WindowManager;
 import xyz.rinc.gl.sprite.SpritePlayer;
 import xyz.rinc.gl.sprite.SpriteView;
 
-/**
- * Created by rincliu on 20180703.
- */
-
 public class SpriteActivity extends AppCompatActivity {
     
     private SpritePlayer spritePlayer;
@@ -25,6 +21,32 @@ public class SpriteActivity extends AppCompatActivity {
 
         SpriteView spriteView = findViewById(R.id.glssv);
         spritePlayer = new SpritePlayer(spriteView);
+        spritePlayer.setCallback(new SpritePlayer.Callback() {
+            @Override
+            public void onStarted() {
+                Log.d("@_@", "onStarted");
+            }
+
+            @Override
+            public void onPaused() {
+                Log.d("@_@", "onPaused");
+            }
+
+            @Override
+            public void onResumed() {
+                Log.d("@_@", "onResumed");
+            }
+
+            @Override
+            public void onStopped() {
+                Log.d("@_@", "onStopped");
+            }
+
+            @Override
+            public void onLooped() {
+                Log.d("@_@", "onLooped");
+            }
+        });
     }
 
     @Override
