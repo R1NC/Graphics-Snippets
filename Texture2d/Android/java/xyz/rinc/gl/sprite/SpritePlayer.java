@@ -22,7 +22,7 @@ public class SpritePlayer {
 
     private MediaPlayer audioPlayer;
     private SpriteView spriteView;
-    private boolean playing, stop;
+    private boolean playing, stop, destroy;
     private AssetManager assetManager;
 
     private Callback callback;
@@ -62,7 +62,7 @@ public class SpritePlayer {
         new Thread() {
             @Override
             public void run() {
-                while (!stop) {
+                while (!stop && !destroy) {
                     try {
                         for (int i = 0; i < spriteView.sprites.size(); i++) {
                             Sprite sprite = spriteView.sprites.get(i);
@@ -99,26 +99,28 @@ public class SpritePlayer {
                         e.printStackTrace();
                     }
                 }
-                if (frameIndex == frameCount - 1) {
-                    if (callback != null) {
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                callback.onStopped();
-                            }
-                        });
+                if (!destroy) {
+                    if (frameIndex == frameCount - 1) {
+                        if (callback != null) {
+                            handler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    callback.onStopped();
+                                }
+                            });
+                        }
+                    } else {
+                        if (callback != null) {
+                            handler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    callback.onPaused();
+                                }
+                            });
+                        }
                     }
-                } else {
-                    if (callback != null) {
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                callback.onPaused();
-                            }
-                        });
-                    }
+                    playing = false;
                 }
-                playing = false;
             }
         }.start();
     }
@@ -181,8 +183,8 @@ public class SpritePlayer {
 
     public void onPause() {
         spriteView.onPause();
-        stop = true;
         stopAudioPlayer();
+        stop = true;
     }
 
     public void onResume() {
@@ -194,6 +196,7 @@ public class SpritePlayer {
         releaseSprites(false);
         stopAudioPlayer();
         releaseAudioPlayer();
+        destroy = true;
     }
 
     public void play(String assetFolder, float scale) {

@@ -44,6 +44,21 @@ public class GLUtil {
             for (int h : textureHandles) {
                 if (h != 0) {
                     GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, h);
+                    GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_MIRRORED_REPEAT);
+                    GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_MIRRORED_REPEAT);
+                    // https://learnopengl.com/Getting-started/Textures
+                    //
+                    // GL_NEAREST (also known as nearest neighbor filtering) is the default texture filtering method of OpenGL.
+                    // When set to GL_NEAREST, OpenGL selects the pixel which center is closest to the texture coordinate.
+                    //
+                    // GL_LINEAR (also known as (bi)linear filtering) takes an interpolated value from the texture coordinate's neighboring texels,
+                    // approximating a color between the texels. The smaller the distance from the texture coordinate to a texel's center,
+                    // the more that texel's color contributes to the sampled color.
+                    //
+                    // GL_NEAREST results in blocked patterns where we can clearly see the pixels that form the texture
+                    // while GL_LINEAR produces a smoother pattern where the individual pixels are less visible.
+                    GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
+                    GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
                 }
             }
             return textureHandles;
