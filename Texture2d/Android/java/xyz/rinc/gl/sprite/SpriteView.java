@@ -47,6 +47,20 @@ public class SpriteView extends GLSurfaceView implements GLSurfaceView.Renderer 
         }
     }
 
+    void notifyTextureTypeChanged() {
+        if (sprites != null) {
+            for (final Sprite sprite : sprites) {
+                // OpenGL API must Run on GLThread
+                queueEvent(new Runnable(){
+                    @Override
+                    public void run() {
+                        sprite.loadShader();
+                    }
+                });
+            }
+        }
+    }
+
     @Override
     public void onSurfaceCreated(GL10 unused, EGLConfig config) {
         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -79,7 +93,8 @@ public class SpriteView extends GLSurfaceView implements GLSurfaceView.Renderer 
 
         if (sprites != null) {
             for (Sprite sprite : sprites) {
-                if (sprite.bitmap != null && !sprite.bitmap.isRecycled()) {
+                if ((sprite.textureType == Sprite.TextureType.PNG && sprite.png != null && !sprite.png.isRecycled())
+                        || (sprite.textureType == Sprite.TextureType.ETC1 && sprite.etc1 != null)) {
                     sprite.onDrawFrame();
                 }
             }

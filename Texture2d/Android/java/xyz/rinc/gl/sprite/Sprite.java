@@ -1,6 +1,7 @@
 package xyz.rinc.gl.sprite;
 
 import android.graphics.Bitmap;
+import android.opengl.ETC1Util;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 
@@ -9,24 +10,53 @@ import java.nio.ShortBuffer;
 
 public class Sprite {
 
-    private static final String VERTEX_SHADER_CODE = "" +
+    public enum TextureType {
+        PNG, ETC1, PVRTC
+    }
+
+    private static final String VERTEX_SHADER_CODE_PNG = "" +
             "attribute vec4 a_Position;" +
-            "attribute vec2 a_TexCoordinate;" +
-            "varying vec2 v_TexCoordinate;" +
+            "attribute vec2 a_TextureCoordinate;" +
+            "varying vec2 v_TextureCoordinate;" +
             "uniform mat4 u_projectionMatrix;" +
             "uniform mat4 u_cameraMatrix;" +
             "uniform mat4 u_modelMatrix;" +
             "void main() {" +
             "gl_Position = u_projectionMatrix * u_cameraMatrix * u_modelMatrix * a_Position;" +
-            "v_TexCoordinate = a_TexCoordinate;" +
+            "v_TextureCoordinate = a_TextureCoordinate;" +
             "}";
 
-    private static final String FRAGMENT_SHADER_CODE = "" +
+    private static final String FRAGMENT_SHADER_CODE_PNG = "" +
             "precision mediump float;" +
             "uniform sampler2D u_Texture;" +
-            "varying vec2 v_TexCoordinate;" +
+            "varying vec2 v_TextureCoordinate;" +
             "void main() {" +
-            "gl_FragColor = texture2D(u_Texture, v_TexCoordinate);" +
+            "gl_FragColor = texture2D(u_Texture, v_TextureCoordinate);" +
+            "}";
+
+    private static final String VERTEX_SHADER_CODE_ETC1 = "" +
+            "attribute vec4 a_Position;" +
+            "attribute vec2 a_TextureCoordinate;" +
+            "varying vec2 v_TextureCoordinate;" +
+            "varying vec2 v_AlphaCoordinate;" +
+            "uniform mat4 u_projectionMatrix;" +
+            "uniform mat4 u_cameraMatrix;" +
+            "uniform mat4 u_modelMatrix;" +
+            "void main() {" +
+            "gl_Position = u_projectionMatrix * u_cameraMatrix * u_modelMatrix * a_Position;" +
+            "v_TextureCoordinate = a_TextureCoordinate * vec2(1.0, 0.5);" +
+            "v_AlphaCoordinate = v_TextureCoordinate + vec2(0.0, 0.5);" +
+            "}";
+
+    private static final String FRAGMENT_SHADER_CODE_ETC1 = "" +
+            "precision mediump float;" +
+            "uniform sampler2D u_Texture;" +
+            "varying vec2 v_TextureCoordinate;" +
+            "varying vec2 v_AlphaCoordinate;" +
+            "void main() {" +
+            "vec4 color = texture2D(u_Texture, v_TextureCoordinate);" +
+            "color.a = texture2D(u_Texture, v_AlphaCoordinate).r;" +
+            "gl_FragColor = color;" +
             "}";
 
     private static final float[] VERTEX_COORDS = {
@@ -81,14 +111,15 @@ public class Sprite {
 
     //Declare as volatile because we are updating it from another thread
     volatile float angle, scale = 1.f, transX, transY;
-    volatile Bitmap bitmap;
     private int imgWidth, imgHeight;
+    volatile Bitmap png;
+    volatile ETC1Util.ETC1Texture etc1;
+    volatile TextureType textureType = TextureType.PNG;
 
     Sprite() {
     }
 
     void onSurfaceCreated() {
-        loadShader();
         prepareBuffers();
         setCameraMatrix();
     }
@@ -100,10 +131,14 @@ public class Sprite {
     }
 
     void onDrawFrame() {
-        if (bitmap != null && !bitmap.isRecycled()) {
-            imgWidth = bitmap.getWidth();
-            imgHeight = bitmap.getHeight();
-            GLUtil.setBitmap2Texture2d(0, bitmap);
+        if (textureType == TextureType.PNG && png != null && !png.isRecycled()) {
+            imgWidth = png.getWidth();
+            imgHeight = png.getHeight();
+            GLUtil.setBitmap2Texture2d(0, png);
+        } else if (textureType == TextureType.ETC1 && etc1 != null) {
+            imgWidth = etc1.getWidth();
+            imgHeight = etc1.getHeight() / 2;
+            GLUtil.bindTextureETC1(0, etc1);
         }
 
         updateModelMatrix();
@@ -120,12 +155,16 @@ public class Sprite {
         }
     }
 
-    private void loadShader() {
-        program = GLUtil.loadShader(VERTEX_SHADER_CODE, FRAGMENT_SHADER_CODE);
+    void loadShader() {
+        if (textureType == TextureType.PNG) {
+            program = GLUtil.loadShader(VERTEX_SHADER_CODE_PNG, FRAGMENT_SHADER_CODE_PNG);
+        } else if (textureType == TextureType.ETC1) {
+            program = GLUtil.loadShader(VERTEX_SHADER_CODE_ETC1, FRAGMENT_SHADER_CODE_ETC1);
+        }
         if (program > 0) {
             GLES20.glUseProgram(program);
             locPosition = GLES20.glGetAttribLocation(program, "a_Position");
-            locTextureCoordinate = GLES20.glGetAttribLocation(program, "a_TexCoordinate");
+            locTextureCoordinate = GLES20.glGetAttribLocation(program, "a_TextureCoordinate");
             locProjectionMatrix = GLES20.glGetUniformLocation(program, "u_projectionMatrix");
             locCameraMatrix = GLES20.glGetUniformLocation(program, "u_cameraMatrix");
             locModelMatrix = GLES20.glGetUniformLocation(program, "u_modelMatrix");

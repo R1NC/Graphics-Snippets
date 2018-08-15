@@ -1,20 +1,36 @@
 package xyz.rinc.gl.sprite;
 
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
+import android.opengl.ETC1;
+import android.opengl.ETC1Util;
+import android.opengl.GLES10;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLUtils;
+import android.text.TextUtils;
 import android.util.Log;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
+import javax.microedition.khronos.opengles.GL10;
+
+import static javax.microedition.khronos.opengles.GL10.GL_TEXTURE_2D;
+
 public class GLUtil {
 
     private static final String TAG = "GLUtil";
+
+    public static final int GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG = 0x8C00;
+    public static final int GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG = 0x8C01;
+    public static final int GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG = 0x8C02;
+    public static final int GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG = 0x8C03;
 
     private GLUtil() {}
 
@@ -43,9 +59,9 @@ public class GLUtil {
             GLES20.glGenTextures(n, textureHandles, 0);
             for (int h : textureHandles) {
                 if (h != 0) {
-                    GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, h);
-                    GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_MIRRORED_REPEAT);
-                    GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_MIRRORED_REPEAT);
+                    GLES20.glBindTexture(GL_TEXTURE_2D, h);
+                    GLES20.glTexParameteri(GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_MIRRORED_REPEAT);
+                    GLES20.glTexParameteri(GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_MIRRORED_REPEAT);
                     // https://learnopengl.com/Getting-started/Textures
                     //
                     // GL_NEAREST (also known as nearest neighbor filtering) is the default texture filtering method of OpenGL.
@@ -57,8 +73,8 @@ public class GLUtil {
                     //
                     // GL_NEAREST results in blocked patterns where we can clearly see the pixels that form the texture
                     // while GL_LINEAR produces a smoother pattern where the individual pixels are less visible.
-                    GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
-                    GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
+                    GLES20.glTexParameteri(GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
+                    GLES20.glTexParameteri(GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
                 }
             }
             return textureHandles;
@@ -70,8 +86,75 @@ public class GLUtil {
     public static void setBitmap2Texture2d(int texture2dIndex, Bitmap bitmap) {
         if (bitmap == null || bitmap.isRecycled() || texture2dIndex < 0 || texture2dIndex > 31) return;
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0 + texture2dIndex);
-        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
+        GLUtils.texImage2D(GL_TEXTURE_2D, 0, bitmap, 0);
         bitmap.recycle();
+    }
+
+    public static ByteBuffer loadTexturePVRTCFromAsset(String asset, AssetManager assetManager) {
+        if (TextUtils.isEmpty(asset) || assetManager == null) return null;
+        try {
+            InputStream stream = assetManager.open(asset);
+            byte[] buffer = new byte[stream.available()];
+            stream.read(buffer);
+            stream.close();
+            int offset = 67; // 52 bit = header, 15 bit = metadata
+            ByteBuffer bf = ByteBuffer.wrap(buffer, offset, buffer.length-offset);
+            bf.order(ByteOrder.LITTLE_ENDIAN);
+            return bf;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static ETC1Util.ETC1Texture loadTextureETC1(InputStream is) {
+        if (is == null) return null;
+        try {
+            return ETC1Util.createTexture(is);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static void bindTexturePVRTC(int texture2dIndex, ByteBuffer data) {
+        if (data == null) return;
+
+        long version     = data.getInt(0) & 0xFFFFFFFFL;
+        long flags       = data.getInt(4);
+        long pixelFormat = data.getLong(8);
+        long colorF      = data.getInt(16);
+        long chanel      = data.getInt(20);
+        int height       = data.getInt(24);
+        int width        = data.getInt(28);
+        long depth       = data.getInt(32);
+        long nsurf       = data.getInt(36);
+        long nface       = data.getInt(40);
+        long mipC        = data.getInt(44);
+        long mSize       = data.getInt(48);
+        long fourCC      = data.getInt(52)& 0xFFFFFFFFL;
+        long key         = data.getInt(56)& 0xFFFFFFFFL;
+        long dataSize    = data.getInt(60)& 0xFFFFFFFFL;
+
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0 + texture2dIndex);
+        GLES20.glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG, 1024, 1024, 0, data.capacity(), data);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
+
+        data.clear();
+    }
+
+    public static void bindTextureETC1(int texture2dIndex, ETC1Util.ETC1Texture texture) {
+        int width = texture.getWidth();
+        int height = texture.getHeight();
+        ByteBuffer data = texture.getData();
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0 + texture2dIndex);
+        GLES10.glCompressedTexImage2D(GLES10.GL_TEXTURE_2D, 0, ETC1.ETC1_RGB8_OES, width, height, 0, data.remaining(), data);
+        texture.getData().clear();
+    }
+
+    public static boolean supportTexturePVRTC() {
+        String extensions = GLES20.glGetString(GL10.GL_EXTENSIONS);
+        return extensions.contains("GL_IMG_texture_compression_pvrtc");
     }
 
     public static int loadShader(String vertexShader, String fragmentShader) {
