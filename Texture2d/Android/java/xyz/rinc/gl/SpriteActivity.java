@@ -68,6 +68,6 @@ public class SpriteActivity extends AppCompatActivity {
     }
 
     public void onClickBtn(View v) {
-        spritePlayer.setParameters("love", 2.f, 1, false);
+        spritePlayer.setParameters("love");
     }
 }

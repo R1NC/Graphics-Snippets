@@ -1,6 +1,5 @@
 package xyz.rinc.gl.sprite;
 
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.opengl.ETC1;
@@ -9,7 +8,6 @@ import android.opengl.GLES10;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLUtils;
-import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.IOException;
@@ -19,18 +17,17 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
-import javax.microedition.khronos.opengles.GL10;
-
 import static javax.microedition.khronos.opengles.GL10.GL_TEXTURE_2D;
 
 public class GLUtil {
 
     private static final String TAG = "GLUtil";
 
-    public static final int GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG = 0x8C00;
+    // PowerVR Texture compression constants
+    /*public static final int GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG = 0x8C00;
     public static final int GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG = 0x8C01;
     public static final int GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG = 0x8C02;
-    public static final int GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG = 0x8C03;
+    public static final int GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG = 0x8C03;*/
 
     private GLUtil() {}
 
@@ -90,7 +87,7 @@ public class GLUtil {
         bitmap.recycle();
     }
 
-    public static ByteBuffer loadTexturePVRTCFromAsset(String asset, AssetManager assetManager) {
+    /*public static ByteBuffer loadTexturePVRTCFromAsset(String asset, AssetManager assetManager) {
         if (TextUtils.isEmpty(asset) || assetManager == null) return null;
         try {
             InputStream stream = assetManager.open(asset);
@@ -105,7 +102,7 @@ public class GLUtil {
             e.printStackTrace();
         }
         return null;
-    }
+    }*/
 
     public static ETC1Util.ETC1Texture loadTextureETC1(InputStream is) {
         if (is == null) return null;
@@ -117,7 +114,7 @@ public class GLUtil {
         }
     }
 
-    public static void bindTexturePVRTC(int texture2dIndex, ByteBuffer data) {
+    /*public static void bindTexturePVRTC(int texture2dIndex, ByteBuffer data) {
         if (data == null) return;
 
         long version     = data.getInt(0) & 0xFFFFFFFFL;
@@ -141,7 +138,7 @@ public class GLUtil {
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
 
         data.clear();
-    }
+    }*/
 
     public static void bindTextureETC1(int texture2dIndex, ETC1Util.ETC1Texture texture) {
         int width = texture.getWidth();
@@ -149,13 +146,13 @@ public class GLUtil {
         ByteBuffer data = texture.getData();
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0 + texture2dIndex);
         GLES10.glCompressedTexImage2D(GLES10.GL_TEXTURE_2D, 0, ETC1.ETC1_RGB8_OES, width, height, 0, data.remaining(), data);
-        texture.getData().clear();
+        data.clear();
     }
 
-    public static boolean supportTexturePVRTC() {
+    /*public static boolean supportTexturePVRTC() {
         String extensions = GLES20.glGetString(GL10.GL_EXTENSIONS);
         return extensions.contains("GL_IMG_texture_compression_pvrtc");
-    }
+    }*/
 
     public static int loadShader(String vertexShader, String fragmentShader) {
         int iVShader;

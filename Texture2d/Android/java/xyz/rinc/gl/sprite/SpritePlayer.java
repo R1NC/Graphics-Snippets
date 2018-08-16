@@ -5,8 +5,6 @@ import android.content.res.AssetManager;
 import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -29,20 +27,21 @@ public class SpritePlayer {
 
     private String frameFolder;
     private int frameIndex = 0, frameCount;
-    private boolean frameLoop;
+    private boolean loop;
     private float frameScale = 1.f;
     private long frameDuration;
 
-    private int currentAudio = -1;
     private SpriteView spriteView;
-    private boolean playing, stop, destroy;
+    private boolean rendering, paused, destroyed;
     private AssetManager assetManager;
 
     private Callback callback;
 
-    private Handler handler;
+    private HashMap<AudioDuration, MediaPlayer> audioMap = new HashMap<>();
 
-    private HashMap<Integer, MediaPlayer> audioMap;
+    private class AudioDuration {
+        int begin, end;
+    }
 
     public interface Callback {
         void onStarted();
@@ -57,59 +56,50 @@ public class SpritePlayer {
     public SpritePlayer(SpriteView spriteView) {
         assetManager = spriteView.getContext().getAssets();
         this.spriteView = spriteView;
-        handler = new Handler(Looper.getMainLooper());
     }
 
     public void setCallback(Callback callback) {
         this.callback = callback;
     }
 
-    private MediaPlayer audioPlayer() {
-        if (audioMap != null) {
-            return audioMap.get(currentAudio);
-        }
-        return null;
-    }
-
     private void startRender() {
-        if (playing || frameFolder == null || frameCount <= 0 || (!frameLoop && frameIndex > frameCount-1)) return;
-        stop = false;
-        if (frameIndex > 0) {
-            startPlayAudio();
+        if (rendering || frameFolder == null || frameCount <= 0 || (!loop && frameIndex > frameCount-1)) return;
+        if (paused) {
             if (callback != null)  callback.onResumed();
+            paused = false;
         }
         new Thread() {
             @Override
             public void run() {
-                while (!stop && !destroy) {
+                while (!paused && !destroyed && (loop || frameIndex <= frameCount-1)) {
                     long t0 = System.currentTimeMillis();
 
-                    if (audioMap != null) {
-                        int a = -1;
-                        for (int k : audioMap.keySet()) {
-                            if (frameLoop) {
-                                if (frameIndex % frameCount == k) {
-                                    a = k;
-                                    break;
+                    if (loop && frameIndex >= frameCount-1 && frameIndex % frameCount == 0) {
+                        if (callback != null) {
+                            spriteView.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    callback.onLooped();
                                 }
-                            } else {
-                                if (frameIndex == k) {
-                                    a = k;
-                                    break;
-                                }
-                            }
-                        }
-                        if (a != -1) {
-                            stopPlayAudio();
-                            currentAudio = a;
-                            startPlayAudio();
+                            });
                         }
                     }
 
-                    try {
-                        for (int i = 0; i < spriteView.sprites.size(); i++) {
-                            Sprite sprite = spriteView.sprites.get(i);
-                            long tx = System.currentTimeMillis();
+                    for (AudioDuration ad : audioMap.keySet()) {
+                        int target = loop ? frameIndex % frameCount : frameIndex;
+                        MediaPlayer player = audioMap.get(ad);
+                        if (target >= ad.begin && target <= ad.end) {
+                            resumeAudio(player);
+                        } else if (target > ad.end) {
+                            pauseAudio(player);
+                        }
+                    }
+
+                    for (int i = 0; i < spriteView.sprites.size(); i++) {
+                        Sprite sprite = spriteView.sprites.get(i);
+                        sprite.scale = frameScale;
+                        long tx = System.currentTimeMillis();
+                        try {
                             if (sprite.textureType == Sprite.TextureType.PNG) {
                                 String assetImage = frameFolder + "/" + (frameIndex % frameCount) + EXTENSION_PNG;
                                 sprite.png = BitmapFactory.decodeStream(assetManager.open(assetImage));
@@ -117,70 +107,58 @@ public class SpritePlayer {
                             } else if (sprite.textureType == Sprite.TextureType.ETC1) {
                                 String assetImage = frameFolder + "/" + (frameIndex % frameCount) + EXTENSION_PKM;
                                 sprite.etc1 = GLUtil.loadTextureETC1(assetManager.open(assetImage));
-                                Log.d(TAG, "Load ETC1 "+assetImage+" cost: "+(System.currentTimeMillis()-tx));
+                                Log.d(TAG, "Load PKM "+assetImage+" cost: "+(System.currentTimeMillis()-tx));
                             }
-                            sprite.scale = frameScale;
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
-                        spriteView.requestRender();
+                    }
+                    refreshSpriteView();
 
-                        if (frameIndex >= frameCount-1) {
-                            if (frameLoop) {
-                                if (frameIndex % frameCount == 0) {
-                                    if (callback != null) {
-                                        handler.post(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                callback.onLooped();
-                                            }
-                                        });
-                                    }
-                                }
-                            } else {
-                                for (int i = 0; i < spriteView.sprites.size(); i++) {
-                                    Sprite sprite = spriteView.sprites.get(i);
-                                    sprite.scale = 0;
-                                }
-                                spriteView.requestRender();
-                                break;
-                            }
-                        }
-
-                        long t1 = System.currentTimeMillis();
-                        if (t1 - t0 < frameDuration) {
+                    long t1 = System.currentTimeMillis();
+                    if (t1 - t0 < frameDuration) {
+                        try {
                             Thread.sleep(frameDuration + t0 - t1);
-                            frameIndex++;
-                        } else {
-                            frameIndex += (t1 - t0) / frameDuration;
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                        frameIndex++;
+                    } else {
+                        frameIndex += (t1 - t0) / frameDuration;
                     }
                 }
-                if (!destroy) {
-                    if (frameIndex >= frameCount - 1) {
-                        stopPlayAudio();
-                        if (callback != null) {
-                            handler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    callback.onStopped();
-                                }
-                            });
-                        }
-                    } else {
-                        if (callback != null) {
-                            handler.post(new Runnable() {
-                                @Override
-                                public void run() {
+
+                rendering = false;
+                pauseAllAudios();
+                if (!destroyed) {
+                    if (callback != null) {
+                        spriteView.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (paused) {
                                     callback.onPaused();
+                                } else {
+                                    callback.onStopped();
+                                    for (int i = 0; i < spriteView.sprites.size(); i++) {
+                                        spriteView.sprites.get(i).scale = 0;
+                                    }
+                                    refreshSpriteView();
                                 }
-                            });
-                        }
+                            }
+                        });
                     }
-                    playing = false;
                 }
             }
         }.start();
+    }
+
+    private void refreshSpriteView() {
+        spriteView.post(new Runnable() {
+            @Override
+            public void run() {
+                spriteView.requestRender();
+            }
+        });
     }
 
     private MediaPlayer createPlayer(String assetFile, boolean loop) {
@@ -199,46 +177,44 @@ public class SpritePlayer {
         return player;
     }
 
-    private void startPlayAudio() {
-        MediaPlayer player = audioPlayer();
-        if (audioMap != null && player != null) {
-            if (!playing) {
-                try {
+    private void resumeAudio(MediaPlayer player) {
+        if (player != null) {
+            try {
+                if (!player.isPlaying() && (player.getDuration() > 0 && player.getCurrentPosition() < player.getDuration())) {
                     player.start();
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
-                playing = true;
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
 
-    private void stopPlayAudio() {
-        MediaPlayer player = audioPlayer();
-        if (audioMap != null && player != null) {
-            if (playing) {
-                try {
+    private void pauseAudio(MediaPlayer player) {
+        if (player != null) {
+            try {
+                if (player.isPlaying()) {
                     player.pause();
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
-                playing = false;
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+        }
+    }
+
+    private void pauseAllAudios() {
+        for (MediaPlayer player : audioMap.values()) {
+            pauseAudio(player);
         }
     }
 
     private void releaseAllAudios() {
-        if (audioMap != null) {
-            for (int k : audioMap.keySet()) {
-                MediaPlayer p = audioMap.get(k);
-                if (p != null) {
-                    p.release();
-                }
+        for (AudioDuration ad : audioMap.keySet()) {
+            MediaPlayer p = audioMap.get(ad);
+            if (p != null) {
+                p.release();
             }
-            audioMap.clear();
         }
-        currentAudio = -1;
-        playing = false;
+        audioMap.clear();
     }
 
     private void releaseSprites(boolean reset) {
@@ -254,8 +230,8 @@ public class SpritePlayer {
 
     public void onPause() {
         spriteView.onPause();
-        stopPlayAudio();
-        stop = true;
+        pauseAllAudios();
+        paused = true;
     }
 
     public void onResume() {
@@ -265,14 +241,12 @@ public class SpritePlayer {
 
     public void onDestroy() {
         releaseSprites(false);
-        stopPlayAudio();
+        pauseAllAudios();
         releaseAllAudios();
-        destroy = true;
+        destroyed = true;
     }
 
     public void play(String assetFolder) {
-        stop = true;
-
         if (readFiles(assetFolder) == null) return;
 
         frameIndex = 0;
@@ -302,21 +276,25 @@ public class SpritePlayer {
                             s.textureType = "png".equals(format) ? Sprite.TextureType.PNG : Sprite.TextureType.ETC1;
                             spriteView.notifyTextureTypeChanged();
                         }
-                        frameLoop = jo.optInt("loop") == 1;
+                        loop = jo.optInt("loop") == 1;
                         frameScale = (float)jo.optDouble("scale");
                         frameDuration = jo.optLong("duration");
                         JSONArray ja = jo.optJSONArray("audio");
                         if (ja != null) {
-                            audioMap = new HashMap<>();
+                            if (!audioMap.isEmpty()) audioMap.clear();
                             for (int i = 0; i < ja.length(); i++) {
                                 JSONObject j = ja.optJSONObject(i);
                                 String a = frameFolder + "/" + j.optString("file") + ".mp3";
-                                audioMap.put(j.optInt("begin"), createPlayer(a, frameLoop));
+                                AudioDuration ad = new AudioDuration();
+                                ad.begin = j.optInt("begin");
+                                ad.end = j.optInt("end");
+                                audioMap.put(ad, createPlayer(a, loop));
                             }
                         }
+                        paused = false;
                         startRender();
                         if (callback != null) {
-                            handler.post(new Runnable() {
+                            spriteView.post(new Runnable() {
                                 @Override
                                 public void run() {
                                     callback.onStarted();

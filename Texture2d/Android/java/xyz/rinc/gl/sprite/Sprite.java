@@ -11,7 +11,7 @@ import java.nio.ShortBuffer;
 public class Sprite {
 
     public enum TextureType {
-        PNG, ETC1, PVRTC
+        UNKNOWN, PNG, ETC1
     }
 
     private static final String VERTEX_SHADER_CODE_PNG = "" +
@@ -114,12 +114,13 @@ public class Sprite {
     private int imgWidth, imgHeight;
     volatile Bitmap png;
     volatile ETC1Util.ETC1Texture etc1;
-    volatile TextureType textureType = TextureType.PNG;
+    volatile TextureType textureType = TextureType.UNKNOWN;
 
     Sprite() {
     }
 
     void onSurfaceCreated() {
+        loadShader();
         prepareBuffers();
         setCameraMatrix();
     }
@@ -152,6 +153,18 @@ public class Sprite {
         if (program > 0) {
             GLES20.glDeleteTextures(1, textureHandles, 0);
             GLES20.glDeleteProgram(program);
+        }
+        if (png != null) {
+            if (!png.isRecycled()) {
+                png.recycle();
+            }
+            png = null;
+        }
+        if (etc1 != null) {
+            if (etc1.getData() != null) {
+                etc1.getData().clear();
+            }
+            etc1 = null;
         }
     }
 
@@ -224,7 +237,6 @@ public class Sprite {
             GLES20.glEnableVertexAttribArray(locPosition);
             GLES20.glEnableVertexAttribArray(locTextureCoordinate);
 
-            //GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, VERTEX_COORDS.length / 3);
             GLES20.glDrawElements(GLES20.GL_TRIANGLE_STRIP, DRAW_ORDER.length, GLES20.GL_UNSIGNED_SHORT, drawOrderBuffer);
 
             GLES20.glDisableVertexAttribArray(locPosition);
