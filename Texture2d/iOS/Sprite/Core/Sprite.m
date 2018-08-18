@@ -61,7 +61,7 @@ const GLfloat CAMERA_UP_Z = 0.0f;
         _scale = 1.0f;
         
         [self loadShader];
-        //[self prepareBuffers];
+        [self prepareBuffers];
         [self setCameraMatrix];
     }
     return self;
@@ -87,6 +87,9 @@ const GLfloat CAMERA_UP_Z = 0.0f;
     }
     if (_textureBuffer) {
         glDeleteBuffers(1, &_textureBuffer);
+    }
+    if (_indexBuffer) {
+        glDeleteBuffers(1, &_indexBuffer);
     }
 }
 
@@ -154,19 +157,16 @@ const GLfloat CAMERA_UP_Z = 0.0f;
 }
 
 -(void)drawElements {
-    //glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
-    //glVertexAttribPointer(_locPosition, 3, GL_FLOAT, GL_FALSE, 4*sizeof(GLfloat), (void*)NULL);
-    glVertexAttribPointer(_locPosition, 3, GL_FLOAT, GL_FALSE, 0, VERTEX_COORDS);
+    glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
+    glVertexAttribPointer(_locPosition, 3, GL_FLOAT, GL_FALSE, 0, (void*)NULL);
     glEnableVertexAttribArray(_locPosition);
     
-    //glBindBuffer(GL_ARRAY_BUFFER, _textureBuffer);
-    //glVertexAttribPointer(_locTextureCoordinate, 2, GL_FLOAT, GL_FALSE, 4*sizeof(GLfloat), (void*)NULL+3*sizeof(GLfloat));
-    glVertexAttribPointer(_locTextureCoordinate, 2, GL_FLOAT, GL_FALSE, 0, TEXTURE_COORDS);
+    glBindBuffer(GL_ARRAY_BUFFER, _textureBuffer);
+    glVertexAttribPointer(_locTextureCoordinate, 2, GL_FLOAT, GL_FALSE, 0, (void*)NULL);
     glEnableVertexAttribArray(_locTextureCoordinate);
     
-    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
-    //glDrawElements(GL_TRIANGLE_STRIP, sizeof(INDICES)/sizeof(GLubyte), GL_UNSIGNED_BYTE, (void*)NULL);
-    glDrawElements(GL_TRIANGLE_STRIP, sizeof(INDICES)/sizeof(GLubyte), GL_UNSIGNED_BYTE, INDICES);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
+    glDrawElements(GL_TRIANGLE_STRIP, sizeof(INDICES)/sizeof(GLubyte), GL_UNSIGNED_BYTE, (void*)NULL);
     
     glDisableVertexAttribArray(_locPosition);
     glDisableVertexAttribArray(_locTextureCoordinate);
