@@ -232,9 +232,9 @@ public class Sprite {
     private void drawElements() {
         try {
             GLES20.glVertexAttribPointer(locPosition, 3, GLES20.GL_FLOAT, false, 0, vertexBuffer);
-            GLES20.glVertexAttribPointer(locTextureCoordinate, 2, GLES20.GL_FLOAT, false, 0, textureBuffer);
-
             GLES20.glEnableVertexAttribArray(locPosition);
+
+            GLES20.glVertexAttribPointer(locTextureCoordinate, 2, GLES20.GL_FLOAT, false, 0, textureBuffer);
             GLES20.glEnableVertexAttribArray(locTextureCoordinate);
 
             GLES20.glDrawElements(GLES20.GL_TRIANGLE_STRIP, DRAW_ORDER.length, GLES20.GL_UNSIGNED_SHORT, drawOrderBuffer);
