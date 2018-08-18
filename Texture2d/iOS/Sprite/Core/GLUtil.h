@@ -15,7 +15,7 @@
 
 +(GLKTextureInfo*)textureInfoWithImage:(UIImage*)image;
 
-+(GLuint)textureWithImage:(UIImage*)image;
+//+(GLuint)textureWithImage:(UIImage*)image;
 
 +(void)bindTextureInfo:(GLKTextureInfo*)textureInfo channel:(GLenum)channel location:(GLuint)location;
 

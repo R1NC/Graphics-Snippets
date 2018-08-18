@@ -61,7 +61,7 @@ const GLfloat CAMERA_UP_Z = 0.0f;
         _scale = 1.0f;
         
         [self loadShader];
-        [self prepareBuffers];
+        //[self prepareBuffers];
         [self setCameraMatrix];
     }
     return self;
@@ -96,7 +96,7 @@ const GLfloat CAMERA_UP_Z = 0.0f;
     if (_program > 0) {
         glUseProgram(_program);
         _locPosition = glGetAttribLocation(_program, "a_Position");
-        _locTextureCoordinate = glGetAttribLocation(_program, "a_TexCoordinate");
+        _locTextureCoordinate = glGetAttribLocation(_program, "a_TextureCoordinate");
         _locTexture = glGetUniformLocation(_program, "u_Texture");
         _locProjectionMatrix = glGetUniformLocation(_program, "u_projectionMatrix");
         _locCameraMatrix = glGetUniformLocation(_program, "u_cameraMatrix");
@@ -108,11 +108,11 @@ const GLfloat CAMERA_UP_Z = 0.0f;
     glGenBuffers(1, &_vertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(VERTEX_COORDS), VERTEX_COORDS, GL_STATIC_DRAW);
-    
+
     glGenBuffers(1, &_textureBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, _textureBuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(TEXTURE_COORDS), TEXTURE_COORDS, GL_STATIC_DRAW);
-    
+
     glGenBuffers(1, &_indexBuffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(INDICES), INDICES, GL_STATIC_DRAW);
@@ -136,7 +136,13 @@ const GLfloat CAMERA_UP_Z = 0.0f;
 -(void)updateModelMatrixWithRect:(CGRect)rect {
     GLKMatrix4 translateMatrix = GLKMatrix4MakeTranslation(_transX, _transY, 0.0);
     GLKMatrix4 rotateMatrix = GLKMatrix4MakeRotation(GLKMathDegreesToRadians(_angle) , 0.0, 0.0, -1.0);
-    GLKMatrix4 scaleMatrix = GLKMatrix4MakeScale(_scale, _scale, 1.0);
+    GLKMatrix4 scaleMatrix = GLKMatrix4Identity;
+    if (_textureInfo && _textureInfo.width > 0 && _textureInfo.height > 0) {
+        int targetSize = MIN(rect.size.width, rect.size.height);
+        float baseScaleX = (float)_textureInfo.width / targetSize;
+        float baseScaleY = (float)_textureInfo.height / targetSize;
+        scaleMatrix = GLKMatrix4MakeScale(baseScaleX * _scale, baseScaleY * _scale, 1.0);
+    }
     _modelMatrix = GLKMatrix4Multiply(translateMatrix, rotateMatrix);
     _modelMatrix = GLKMatrix4Multiply(_modelMatrix, scaleMatrix);
 }
@@ -148,16 +154,19 @@ const GLfloat CAMERA_UP_Z = 0.0f;
 }
 
 -(void)drawElements {
-    glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
-    glVertexAttribPointer(_locPosition, 3, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (void*)NULL);
+    //glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
+    //glVertexAttribPointer(_locPosition, 3, GL_FLOAT, GL_FALSE, 4*sizeof(GLfloat), (void*)NULL);
+    glVertexAttribPointer(_locPosition, 3, GL_FLOAT, GL_FALSE, 0, VERTEX_COORDS);
     glEnableVertexAttribArray(_locPosition);
     
-    glBindBuffer(GL_ARRAY_BUFFER, _textureBuffer);
-    glVertexAttribPointer(_locTextureCoordinate, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (void*)NULL+3*sizeof(GLfloat));
+    //glBindBuffer(GL_ARRAY_BUFFER, _textureBuffer);
+    //glVertexAttribPointer(_locTextureCoordinate, 2, GL_FLOAT, GL_FALSE, 4*sizeof(GLfloat), (void*)NULL+3*sizeof(GLfloat));
+    glVertexAttribPointer(_locTextureCoordinate, 2, GL_FLOAT, GL_FALSE, 0, TEXTURE_COORDS);
     glEnableVertexAttribArray(_locTextureCoordinate);
     
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
-    glDrawElements(GL_TRIANGLE_STRIP, sizeof(INDICES)/sizeof(GLubyte), GL_UNSIGNED_BYTE, (void*)NULL);
+    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
+    //glDrawElements(GL_TRIANGLE_STRIP, sizeof(INDICES)/sizeof(GLubyte), GL_UNSIGNED_BYTE, (void*)NULL);
+    glDrawElements(GL_TRIANGLE_STRIP, sizeof(INDICES)/sizeof(GLubyte), GL_UNSIGNED_BYTE, INDICES);
     
     glDisableVertexAttribArray(_locPosition);
     glDisableVertexAttribArray(_locTextureCoordinate);

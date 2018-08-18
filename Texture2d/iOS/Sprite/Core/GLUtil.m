@@ -31,7 +31,7 @@
     return nil;
 }
 
-+(GLuint)textureWithImage:(UIImage*)image {
+/*+(GLuint)textureWithImage:(UIImage*)image {
     CGImageRef cgImage = image.CGImage;
     if (!cgImage) {
         return -1;
@@ -68,7 +68,7 @@
     free(data);
     
     return texture;
-}
+}*/
 
 +(GLuint)loadVertexGLSL:(NSString*)vertextGLSL fragmentGLSL:(NSString*)fragmentGLSL {
     GLuint vertexShader = [self compileGLSL:vertextGLSL type:GL_VERTEX_SHADER];
