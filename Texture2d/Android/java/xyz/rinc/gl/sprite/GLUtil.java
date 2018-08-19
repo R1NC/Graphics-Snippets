@@ -1,5 +1,6 @@
 package xyz.rinc.gl.sprite;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.opengl.ETC1;
@@ -8,10 +9,14 @@ import android.opengl.GLES10;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLUtils;
+import android.text.TextUtils;
 import android.util.Log;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.StringBuffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -153,6 +158,38 @@ public class GLUtil {
         String extensions = GLES20.glGetString(GL10.GL_EXTENSIONS);
         return extensions.contains("GL_IMG_texture_compression_pvrtc");
     }*/
+
+    public static int loadShaderAsset(Context context, String vertexShaderAsset, String fragmentShaderAsset) {
+        String vertexShader = stringFromAsset(context, vertexShaderAsset);
+        String fragmentShader = stringFromAsset(context, fragmentShaderAsset);
+        if (!TextUtils.isEmpty(vertexShader) && !TextUtils.isEmpty(fragmentShader)) {
+            return loadShader(vertexShader, fragmentShader);
+        }
+        return -1;
+    }
+
+    private static String stringFromAsset(Context context, String assetFile) {
+        StringBuffer sBuffer = new StringBuffer();
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new InputStreamReader(context.getAssets().open(assetFile)));
+            String line;
+            while (!TextUtils.isEmpty(line = reader.readLine())) {
+                sBuffer.append(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return sBuffer.toString();
+        }
+    }
 
     public static int loadShader(String vertexShader, String fragmentShader) {
         int iVShader;

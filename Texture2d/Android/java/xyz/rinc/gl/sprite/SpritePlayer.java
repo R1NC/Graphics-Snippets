@@ -223,7 +223,7 @@ public class SpritePlayer {
         }
         spriteView.sprites.clear();
         if (reset) {
-            spriteView.sprites.add(new Sprite());
+            spriteView.sprites.add(new Sprite(spriteView.getContext()));
         }
         spriteView.notifyDataSetChanged();
     }

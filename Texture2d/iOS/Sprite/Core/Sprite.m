@@ -95,7 +95,7 @@ const GLfloat CAMERA_UP_Z = 0.0f;
 
 
 -(void)loadShader {
-    _program = [GLUtil loadVertexGLSL:@"vertex" fragmentGLSL:@"fragment"];
+    _program = [GLUtil loadVertexGLSL:@"vertex-png" fragmentGLSL:@"fragment-png"];
     if (_program > 0) {
         glUseProgram(_program);
         _locPosition = glGetAttribLocation(_program, "a_Position");

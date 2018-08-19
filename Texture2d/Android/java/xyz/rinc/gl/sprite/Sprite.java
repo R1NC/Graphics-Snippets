@@ -14,51 +14,6 @@ public class Sprite {
         UNKNOWN, PNG, ETC1
     }
 
-    private static final String VERTEX_SHADER_CODE_PNG = "" +
-            "attribute vec4 a_Position;" +
-            "attribute vec2 a_TextureCoordinate;" +
-            "varying vec2 v_TextureCoordinate;" +
-            "uniform mat4 u_projectionMatrix;" +
-            "uniform mat4 u_cameraMatrix;" +
-            "uniform mat4 u_modelMatrix;" +
-            "void main() {" +
-            "gl_Position = u_projectionMatrix * u_cameraMatrix * u_modelMatrix * a_Position;" +
-            "v_TextureCoordinate = a_TextureCoordinate;" +
-            "}";
-
-    private static final String FRAGMENT_SHADER_CODE_PNG = "" +
-            "precision mediump float;" +
-            "uniform sampler2D u_Texture;" +
-            "varying vec2 v_TextureCoordinate;" +
-            "void main() {" +
-            "gl_FragColor = texture2D(u_Texture, v_TextureCoordinate);" +
-            "}";
-
-    private static final String VERTEX_SHADER_CODE_ETC1 = "" +
-            "attribute vec4 a_Position;" +
-            "attribute vec2 a_TextureCoordinate;" +
-            "varying vec2 v_TextureCoordinate;" +
-            "varying vec2 v_AlphaCoordinate;" +
-            "uniform mat4 u_projectionMatrix;" +
-            "uniform mat4 u_cameraMatrix;" +
-            "uniform mat4 u_modelMatrix;" +
-            "void main() {" +
-            "gl_Position = u_projectionMatrix * u_cameraMatrix * u_modelMatrix * a_Position;" +
-            "v_TextureCoordinate = a_TextureCoordinate * vec2(1.0, 0.5);" +
-            "v_AlphaCoordinate = v_TextureCoordinate + vec2(0.0, 0.5);" +
-            "}";
-
-    private static final String FRAGMENT_SHADER_CODE_ETC1 = "" +
-            "precision mediump float;" +
-            "uniform sampler2D u_Texture;" +
-            "varying vec2 v_TextureCoordinate;" +
-            "varying vec2 v_AlphaCoordinate;" +
-            "void main() {" +
-            "vec4 color = texture2D(u_Texture, v_TextureCoordinate);" +
-            "color.a = texture2D(u_Texture, v_AlphaCoordinate).r;" +
-            "gl_FragColor = color;" +
-            "}";
-
     private static final float[] VERTEX_COORDS = {
             -1.0f, 1.0f, 0.0f, //top left
             1.0f, 1.0f, 0.0f, //top right
@@ -75,7 +30,7 @@ public class Sprite {
     };
 
     // Draw two triangles
-    private static final short[] DRAW_ORDER = {0, 1, 2, 0, 3, 2};
+    private static final short[] INDICES = {0, 1, 2, 0, 3, 2};
 
     // Position the eye behind the origin
     private static final float CAMERA_EYE_X = 0.0f;
@@ -94,7 +49,7 @@ public class Sprite {
 
     private FloatBuffer vertexBuffer;
     private FloatBuffer textureBuffer;
-    private ShortBuffer drawOrderBuffer;
+    private ShortBuffer indexBuffer;
 
     private int program;
 
@@ -109,6 +64,8 @@ public class Sprite {
 
     private int viewWidth, viewHeight;
 
+    private Context context;
+
     //Declare as volatile because we are updating it from another thread
     volatile float angle, scale = 1.f, transX, transY;
     private int imgWidth, imgHeight;
@@ -116,7 +73,8 @@ public class Sprite {
     volatile ETC1Util.ETC1Texture etc1;
     volatile TextureType textureType = TextureType.UNKNOWN;
 
-    Sprite() {
+    Sprite(Context context) {
+        this.context = context;
     }
 
     void onSurfaceCreated() {
@@ -170,9 +128,9 @@ public class Sprite {
 
     void loadShader() {
         if (textureType == TextureType.PNG) {
-            program = GLUtil.loadShader(VERTEX_SHADER_CODE_PNG, FRAGMENT_SHADER_CODE_PNG);
+            program = GLUtil.loadShaderAsset(context, "vertex-png.glsl", "fragment-png.glsl");
         } else if (textureType == TextureType.ETC1) {
-            program = GLUtil.loadShader(VERTEX_SHADER_CODE_ETC1, FRAGMENT_SHADER_CODE_ETC1);
+            program = GLUtil.loadShaderAsset(context, "vertex-etc1.glsl", "fragment-etc1.glsl");
         }
         if (program > 0) {
             GLES20.glUseProgram(program);
@@ -188,7 +146,7 @@ public class Sprite {
     private void prepareBuffers() {
         vertexBuffer = GLUtil.prepareFloatBuffer(VERTEX_COORDS);
         textureBuffer = GLUtil.prepareFloatBuffer(TEXTURE_COORDS);
-        drawOrderBuffer = GLUtil.prepareShortBuffer(DRAW_ORDER);
+        indexBuffer = GLUtil.prepareShortBuffer(INDICES);
     }
 
     private void setCameraMatrix() {
@@ -237,7 +195,7 @@ public class Sprite {
             GLES20.glVertexAttribPointer(locTextureCoordinate, 2, GLES20.GL_FLOAT, false, 0, textureBuffer);
             GLES20.glEnableVertexAttribArray(locTextureCoordinate);
 
-            GLES20.glDrawElements(GLES20.GL_TRIANGLE_STRIP, DRAW_ORDER.length, GLES20.GL_UNSIGNED_SHORT, drawOrderBuffer);
+            GLES20.glDrawElements(GLES20.GL_TRIANGLE_STRIP, INDICES.length, GLES20.GL_UNSIGNED_SHORT, indexBuffer);
 
             GLES20.glDisableVertexAttribArray(locPosition);
             GLES20.glDisableVertexAttribArray(locTextureCoordinate);
