@@ -21,6 +21,7 @@
 		802E311C211994ED00F3D574 /* GLUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 802E311B211994ED00F3D574 /* GLUtil.m */; };
 		80989FAF21290588004EEC94 /* fragment-png.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 80989FAD21290588004EEC94 /* fragment-png.glsl */; };
 		80989FB021290588004EEC94 /* vertex-png.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 80989FAE21290588004EEC94 /* vertex-png.glsl */; };
+		80EDC48D212AA6180086A70C /* SpritePlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 80EDC48C212AA6180086A70C /* SpritePlayer.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,6 +46,8 @@
 		802E311B211994ED00F3D574 /* GLUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GLUtil.m; sourceTree = "<group>"; };
 		80989FAD21290588004EEC94 /* fragment-png.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "fragment-png.glsl"; path = "../../../Shader/fragment-png.glsl"; sourceTree = "<group>"; };
 		80989FAE21290588004EEC94 /* vertex-png.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "vertex-png.glsl"; path = "../../../Shader/vertex-png.glsl"; sourceTree = "<group>"; };
+		80EDC48B212AA6180086A70C /* SpritePlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpritePlayer.h; sourceTree = "<group>"; };
+		80EDC48C212AA6180086A70C /* SpritePlayer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SpritePlayer.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,6 +119,8 @@
 				802E3110211942E800F3D574 /* SpriteView.m */,
 				802E311A211994ED00F3D574 /* GLUtil.h */,
 				802E311B211994ED00F3D574 /* GLUtil.m */,
+				80EDC48B212AA6180086A70C /* SpritePlayer.h */,
+				80EDC48C212AA6180086A70C /* SpritePlayer.m */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -192,6 +197,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				80EDC48D212AA6180086A70C /* SpritePlayer.m in Sources */,
 				802E3117211946A500F3D574 /* Sprite.m in Sources */,
 				802E30F621193FF500F3D574 /* ViewController.m in Sources */,
 				802E311C211994ED00F3D574 /* GLUtil.m in Sources */,

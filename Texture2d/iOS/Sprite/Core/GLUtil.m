@@ -20,6 +20,13 @@
     }
 }
 
++(void)releaseTextureInfo:(GLKTextureInfo*)textureInfo {
+    if (textureInfo) {
+        GLuint name = textureInfo.name;
+        glDeleteTextures(1, &name);
+    }
+}
+
 +(GLKTextureInfo*)textureInfoWithImage:(UIImage *)image {
     if (image) {
         NSError *error;

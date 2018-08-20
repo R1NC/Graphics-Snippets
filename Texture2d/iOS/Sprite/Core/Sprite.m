@@ -74,12 +74,12 @@ const GLfloat CAMERA_UP_Z = 0.0f;
         [self updateModelMatrixWithRect:rect];
         [self updateMatrices2Shader];
         [self drawElements];
+        [GLUtil releaseTextureInfo:_textureInfo];
     }
 }
 
 -(void)onDestroy {
     if (_program > 0) {
-        //glDeleteTextures(1, _textureHandles, 0);
         glDeleteProgram(_program);
     }
     if (_vertexBuffer) {

@@ -9,10 +9,8 @@
 #import "SpriteView.h"
 #import "Sprite.h"
 #import <GLKit/GLKit.h>
-#import "GLUtil.h"
 
 @interface SpriteView()<GLKViewDelegate>
-@property(nonatomic,strong) Sprite* sprite;
 @end
 
 @implementation SpriteView
@@ -23,8 +21,7 @@
         self.contentScaleFactor = 1.0f;//By default, it is 2.0 for retina displays. And this will make texture only one quadrant of the screen!
         [self prepareGLContext];
         [self setupDrawableConfig];
-        _sprite = [Sprite new];
-        _sprite.textureInfo = [GLUtil textureInfoWithImage:[UIImage imageNamed:@"Sprite"]];
+        _sprites = [NSMutableArray new];
         self.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0];
     }
     return self;
@@ -48,7 +45,10 @@
     glViewport(0, 0, rect.size.width, rect.size.height);
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    [_sprite drawInRect:rect];
+    
+    for (Sprite* sprite in _sprites) {
+        [sprite drawInRect:rect];
+    }
 }
 
 @end

@@ -19,4 +19,6 @@
 
 +(void)bindTextureInfo:(GLKTextureInfo*)textureInfo channel:(GLenum)channel location:(GLuint)location;
 
++(void)releaseTextureInfo:(GLKTextureInfo*)textureInfo;
+
 @end
