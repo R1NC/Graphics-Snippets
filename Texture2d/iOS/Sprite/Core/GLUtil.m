@@ -30,6 +30,7 @@
 +(GLKTextureInfo*)textureInfoWithImage:(UIImage *)image {
     if (image) {
         NSError *error;
+        NSLog(@"GL Error = %u", glGetError());//Required to fix a system bug. Or GLKTextureLoader may return nil.
         GLKTextureInfo* textureInfo = [GLKTextureLoader textureWithCGImage:image.CGImage options:nil error:&error];
         if (!error) {
             return textureInfo;
