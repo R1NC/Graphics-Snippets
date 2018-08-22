@@ -74,6 +74,9 @@ const GLfloat CAMERA_UP_Z = 0.0f;
         [self updateModelMatrixWithRect:rect];
         [self updateMatrices2Shader];
         [self drawElements];
+        // GLKTextureInfo doesn't own any memory beyond a few GLuint's.
+        // When you re-assign self.textureInfo, the GLKTextureInfo gets deallocated but the memory used for the pixels is not.
+        // That memory is owned by OpenGL and you must call glDeleteTextures to free it.
         [GLUtil releaseTextureInfo:_textureInfo];
     }
 }

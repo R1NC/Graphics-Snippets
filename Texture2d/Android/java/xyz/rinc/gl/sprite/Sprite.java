@@ -109,9 +109,12 @@ public class Sprite {
 
     void release() {
         if (program > 0) {
-            GLES20.glDeleteTextures(1, textureHandles, 0);
             GLES20.glDeleteProgram(program);
+            GLES20.glDeleteTextures(1, textureHandles, 0);
         }
+        vertexBuffer.clear();
+        textureBuffer.clear();
+        indexBuffer.clear();
         if (png != null) {
             if (!png.isRecycled()) {
                 png.recycle();

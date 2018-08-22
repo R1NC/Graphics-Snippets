@@ -11,9 +11,9 @@
 
 @interface Sprite : NSObject
 
-@property(nonatomic,assign) CGFloat angle, scale, transX, transY;
+@property(atomic,assign) CGFloat angle, scale, transX, transY;
 
-@property(nonatomic,strong) GLKTextureInfo* textureInfo;
+@property(atomic,strong) GLKTextureInfo* textureInfo;
 
 -(void)drawInRect:(CGRect)rect;
 

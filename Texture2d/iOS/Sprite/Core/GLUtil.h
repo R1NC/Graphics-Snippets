@@ -13,7 +13,7 @@
 
 +(GLuint)loadVertexGLSL:(NSString*)vertextGLSL fragmentGLSL:(NSString*)fragmentGLSL;
 
-+(GLKTextureInfo*)textureInfoWithImage:(UIImage*)image;
++(GLKTextureInfo*)textureInfoWithImageFilePath:(NSString*)imageFilePath;
 
 //+(GLuint)textureWithImage:(UIImage*)image;
 

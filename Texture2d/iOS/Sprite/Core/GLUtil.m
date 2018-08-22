@@ -24,14 +24,15 @@
     if (textureInfo) {
         GLuint name = textureInfo.name;
         glDeleteTextures(1, &name);
+        textureInfo = nil;
     }
 }
 
-+(GLKTextureInfo*)textureInfoWithImage:(UIImage *)image {
-    if (image) {
++(GLKTextureInfo*)textureInfoWithImageFilePath:(NSString*)imageFilePath {
+    if (imageFilePath) {
         NSError *error;
         NSLog(@"GL Error = %u", glGetError());//Required to fix a system bug. Or GLKTextureLoader may return nil.
-        GLKTextureInfo* textureInfo = [GLKTextureLoader textureWithCGImage:image.CGImage options:nil error:&error];
+        GLKTextureInfo* textureInfo = [GLKTextureLoader textureWithContentsOfFile:imageFilePath options:nil error:&error];
         if (!error) {
             return textureInfo;
         }

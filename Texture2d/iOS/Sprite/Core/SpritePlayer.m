@@ -128,12 +128,8 @@
             sprite.scale = _frameScale;
             NSTimeInterval tx = [[NSDate date] timeIntervalSince1970];
             NSString* imgName = [NSString stringWithFormat:@"%@-%ld", _frameFolder, _frameIndex % _frameCount];
-            NSString* imgPath = [self pathWithFileName:imgName type:@"png"];
-            UIImage* img = [UIImage imageWithContentsOfFile:imgPath];
-            if (img) {
-                sprite.textureInfo = [GLUtil textureInfoWithImage:img];
-            }
-            NSLog(@"Load png %@ cost:%f imgNil:%d textureNil:%d", imgName, ([[NSDate date] timeIntervalSince1970] - tx), img==nil, sprite.textureInfo==nil);
+            sprite.textureInfo = [GLUtil textureInfoWithImageFilePath:[self pathWithFileName:imgName type:@"png"]];
+            NSLog(@"Load png %@ cost:%f textureNil:%d", imgName, ([[NSDate date] timeIntervalSince1970] - tx), sprite.textureInfo==nil);
         }
         
         [self refreshSpriteView];
