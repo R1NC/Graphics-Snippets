@@ -94,6 +94,7 @@ const GLfloat CAMERA_UP_Z = 0.0f;
     if (_indexBuffer) {
         glDeleteBuffers(1, &_indexBuffer);
     }
+    [GLUtil releaseTextureInfo:_textureInfo];
 }
 
 
