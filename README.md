@@ -1,2 +1,2 @@
-# GLES-Snippets
-Code snippets of OpenGL ES
+# Graphics-Snippets
+Code snippets of graphics (OpenGL ES/ Metal).
