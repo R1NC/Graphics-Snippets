@@ -36,12 +36,9 @@ public class SpriteView extends GLSurfaceView implements GLSurfaceView.Renderer 
         if (sprites != null) {
             for (final Sprite sprite : sprites) {
                 // OpenGL API must Run on GLThread
-                queueEvent(new Runnable(){
-                    @Override
-                    public void run() {
-                        sprite.onSurfaceCreated();
-                        sprite.onSurfaceChanged(width, height);
-                    }
+                queueEvent(()-> {
+                    sprite.onSurfaceCreated();
+                    sprite.onSurfaceChanged(width, height);
                 });
             }
         }
@@ -51,12 +48,7 @@ public class SpriteView extends GLSurfaceView implements GLSurfaceView.Renderer 
         if (sprites != null) {
             for (final Sprite sprite : sprites) {
                 // OpenGL API must Run on GLThread
-                queueEvent(new Runnable(){
-                    @Override
-                    public void run() {
-                        sprite.loadShader();
-                    }
-                });
+                queueEvent(()->sprite.loadShader());
             }
         }
     }
