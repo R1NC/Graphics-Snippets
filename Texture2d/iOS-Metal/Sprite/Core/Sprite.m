@@ -21,7 +21,7 @@ const float VERTICES[] = {
 };
 
 typedef struct {
-    matrix_float4x4 rotation_matrix;
+    matrix_float4x4 trans_matrix;
 } Uniforms;
 
 @interface Sprite()
@@ -76,7 +76,7 @@ typedef struct {
 }
 
 -(void)updateUniforms {
-    _uniforms.rotation_matrix = [GLUtil matrix2dWithRadius:_angle];
+    _uniforms.trans_matrix = [GLUtil matrix2dWithRadius:_angle];
     void *bufferPointer = [_uniformBuffer contents];
     memcpy(bufferPointer, &_uniforms, sizeof(Uniforms));
 }
