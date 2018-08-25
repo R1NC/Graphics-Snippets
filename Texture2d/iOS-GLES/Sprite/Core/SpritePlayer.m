@@ -11,6 +11,11 @@
 #import "GLUtil.h"
 #import <AVFoundation/AVFoundation.h>
 
+typedef NS_ENUM(NSInteger, TextureFormat) {
+    TextureFormatPNG,
+    TextureFormatPVRTC
+};
+
 @interface AudioDuration : NSObject <NSCopying>
 @property(nonatomic,assign) NSInteger begin, end;
 @end
@@ -32,6 +37,7 @@
 @property(nonatomic,assign) CGFloat frameScale;
 @property(nonatomic,assign) NSTimeInterval frameDuration;
 @property(nonatomic,strong) NSMutableDictionary* audioMap;
+@property(nonatomic,assign) TextureFormat textureFormat;
 @end
 
 @implementation SpritePlayer
@@ -128,7 +134,7 @@
             sprite.scale = _frameScale;
             NSTimeInterval tx = [[NSDate date] timeIntervalSince1970];
             NSString* imgName = [NSString stringWithFormat:@"%@-%ld", _frameFolder, _frameIndex % _frameCount];
-            sprite.textureInfo = [GLUtil textureInfoWithImageFilePath:[self pathWithFileName:imgName type:@"png"]];
+            sprite.textureInfo = [GLUtil textureInfoWithImageFilePath:[self pathWithFileName:imgName type:[self typeStringWithTextureFormat:_textureFormat]]];
             NSLog(@"Load png %@ cost:%f textureNil:%d", imgName, ([[NSDate date] timeIntervalSince1970] - tx), sprite.textureInfo==nil);
         }
         
@@ -221,6 +227,7 @@
             if (_frameCount > 0) {
                 _frameScale = [dict[@"scale"] floatValue];
                 _frameDuration = [dict[@"duration"] integerValue];
+                _textureFormat = [dict[@"texture"] isEqualToString:@"pvrtc"] ? TextureFormatPVRTC : TextureFormatPNG;
                 NSArray* audios = dict[@"audio"];
                 if (audios) {
                     for (NSDictionary* d in audios) {
@@ -236,6 +243,15 @@
         }
     }
     return NO;
+}
+
+-(NSString*)typeStringWithTextureFormat:(TextureFormat)textureFormat {
+    switch (textureFormat) {
+        case TextureFormatPNG:
+            return @"png";
+        case TextureFormatPVRTC:
+            return @"pvr";
+    }
 }
 
 -(NSString*)pathWithFileName:(NSString*)name type:(NSString*)type {
