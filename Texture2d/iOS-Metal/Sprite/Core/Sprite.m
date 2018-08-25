@@ -10,14 +10,14 @@
 #import <Simd/Simd.h>
 #import "GLUtil.h"
 
-const float VERTEX_COORDS[] = {
-    0.5, -0.5, 0.0, 1.0,     1.0, 0.0, 0.0, 1.0,
-    -0.5, -0.5, 0.0, 1.0,     0.0, 1.0, 0.0, 1.0,
-    -0.5,  0.5, 0.0, 1.0,     0.0, 0.0, 1.0, 1.0,
+const float VERTICES[] = {
+    1.0, -1.0, 0.0, 1.0,     1.0, 0.0, 0.0, 1.0,
+    -1.0, -1.0, 0.0, 1.0,     0.0, 1.0, 0.0, 1.0,
+    -1.0,  1.0, 0.0, 1.0,     0.0, 0.0, 1.0, 1.0,
     
-    0.5,  0.5, 0.0, 1.0,     1.0, 1.0, 0.0, 1.0,
-    0.5, -0.5, 0.0, 1.0,     1.0, 0.0, 0.0, 1.0,
-    -0.5,  0.5, 0.0, 1.0,     0.0, 0.0, 1.0, 1.0,
+    1.0,  1.0, 0.0, 1.0,     1.0, 1.0, 0.0, 1.0,
+    1.0, -1.0, 0.0, 1.0,     1.0, 0.0, 0.0, 1.0,
+    -1.0,  1.0, 0.0, 1.0,     0.0, 0.0, 1.0, 1.0,
 };
 
 typedef struct {
@@ -40,28 +40,31 @@ typedef struct {
         
         [self prepareBuffersWithDevice:device];
         
-        [GLUtil prepareRenderPipelineWithDevice:device vertexFuncName:@"vertex_func" fragmentFuncName:@"fragment_func"];
+        _renderPipelineState = [GLUtil renderPipelineWithDevice:device vertexFuncName:@"vertex_func" fragmentFuncName:@"fragment_func"];
     }
     return self;
 }
 
 -(void)prepareBuffersWithDevice:(id<MTLDevice>)device {
-    _vertexBuffer = [device newBufferWithBytes:VERTEX_COORDS length:sizeof(VERTEX_COORDS) options:MTLResourceOptionCPUCacheModeDefault];
+    _vertexBuffer = [device newBufferWithBytes:VERTICES length:sizeof(VERTICES) options:MTLResourceOptionCPUCacheModeDefault];
     // Generate a buffer for holding the uniforms
     _uniformBuffer = [device newBufferWithLength:sizeof(Uniforms) options:MTLResourceOptionCPUCacheModeDefault];
 }
 
 -(void)renderDrawable:(id<CAMetalDrawable>)drawable inRect:(CGRect)rect {
+    if (!_renderPipelineState || !drawable) return;
+    
     [self updateUniforms];
     
+    // CommandBuffer is a set of commands that will be executed and encoded in a compact way that the GPU understands.
     id<MTLCommandBuffer> commandBuffer = [_commandQueue commandBuffer];
     
     // RenderPassDescriptor describes the actions Metal should take before and after rendering.(Like glClear & glClearColor)
     MTLRenderPassDescriptor *renderPassDescriptor = [GLUtil renderPassDescriptorForTexture:drawable.texture];
     
+    // RenderCommandEncoder is used to convert from draw calls into the language of the GPU.
     id<MTLRenderCommandEncoder> renderEncoder = [commandBuffer renderCommandEncoderWithDescriptor:renderPassDescriptor];
     [renderEncoder setRenderPipelineState:_renderPipelineState];
-    
     [renderEncoder setVertexBuffer:_vertexBuffer offset:0 atIndex:0];
     [renderEncoder setVertexBuffer:_uniformBuffer offset:0 atIndex:1];
     

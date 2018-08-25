@@ -20,8 +20,8 @@
 		802E3117211946A500F3D574 /* Sprite.m in Sources */ = {isa = PBXBuildFile; fileRef = 802E3116211946A500F3D574 /* Sprite.m */; };
 		802E311C211994ED00F3D574 /* GLUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 802E311B211994ED00F3D574 /* GLUtil.m */; };
 		80EDC48D212AA6180086A70C /* SpritePlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 80EDC48C212AA6180086A70C /* SpritePlayer.m */; };
-		80EDC676212EB28F0086A70C /* vertex-png.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 80EDC674212EB28F0086A70C /* vertex-png.glsl */; };
-		80EDC677212EB28F0086A70C /* fragment-png.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 80EDC675212EB28F0086A70C /* fragment-png.glsl */; };
+		80EDC7DF213156B90086A70C /* fragment-png.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 80EDC7DD213156B90086A70C /* fragment-png.glsl */; };
+		80EDC7E0213156B90086A70C /* vertex-png.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 80EDC7DE213156B90086A70C /* vertex-png.glsl */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -46,8 +46,8 @@
 		802E311B211994ED00F3D574 /* GLUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GLUtil.m; sourceTree = "<group>"; };
 		80EDC48B212AA6180086A70C /* SpritePlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpritePlayer.h; sourceTree = "<group>"; };
 		80EDC48C212AA6180086A70C /* SpritePlayer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SpritePlayer.m; sourceTree = "<group>"; };
-		80EDC674212EB28F0086A70C /* vertex-png.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "vertex-png.glsl"; path = "../../../GLSL/vertex-png.glsl"; sourceTree = "<group>"; };
-		80EDC675212EB28F0086A70C /* fragment-png.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "fragment-png.glsl"; path = "../../../GLSL/fragment-png.glsl"; sourceTree = "<group>"; };
+		80EDC7DD213156B90086A70C /* fragment-png.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "fragment-png.glsl"; path = "../../../Shader-GLES/fragment-png.glsl"; sourceTree = "<group>"; };
+		80EDC7DE213156B90086A70C /* vertex-png.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "vertex-png.glsl"; path = "../../../Shader-GLES/vertex-png.glsl"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,8 +111,8 @@
 		802E310E211942C200F3D574 /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				80EDC675212EB28F0086A70C /* fragment-png.glsl */,
-				80EDC674212EB28F0086A70C /* vertex-png.glsl */,
+				80EDC7DD213156B90086A70C /* fragment-png.glsl */,
+				80EDC7DE213156B90086A70C /* vertex-png.glsl */,
 				802E3115211946A500F3D574 /* Sprite.h */,
 				802E3116211946A500F3D574 /* Sprite.m */,
 				802E310F211942E800F3D574 /* SpriteView.h */,
@@ -182,11 +182,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				80EDC676212EB28F0086A70C /* vertex-png.glsl in Resources */,
+				80EDC7E0213156B90086A70C /* vertex-png.glsl in Resources */,
 				802E30FE21193FF500F3D574 /* LaunchScreen.storyboard in Resources */,
 				802E30FB21193FF500F3D574 /* Assets.xcassets in Resources */,
-				80EDC677212EB28F0086A70C /* fragment-png.glsl in Resources */,
 				802E30F921193FF500F3D574 /* Main.storyboard in Resources */,
+				80EDC7DF213156B90086A70C /* fragment-png.glsl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

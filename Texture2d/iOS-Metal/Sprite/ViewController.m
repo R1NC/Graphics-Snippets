@@ -7,6 +7,7 @@
 //
 
 #import "ViewController.h"
+#import "SpriteView.h"
 
 @interface ViewController ()
 
@@ -17,6 +18,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
+    SpriteView* spriteView = [[SpriteView alloc]initWithFrame:self.view.frame];
+    [self.view addSubview:spriteView];
+    self.view.backgroundColor = [UIColor whiteColor];
 }
 
 

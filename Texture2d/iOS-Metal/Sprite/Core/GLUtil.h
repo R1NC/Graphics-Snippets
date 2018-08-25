@@ -14,7 +14,7 @@
 
 +(matrix_float4x4)matrix2dWithRadius:(float)radians;
 
-+(id<MTLRenderPipelineState>)prepareRenderPipelineWithDevice:(id<MTLDevice>)device vertexFuncName:(NSString*)vertexFuncName fragmentFuncName:(NSString*)fragmentFuncName;
++(id<MTLRenderPipelineState>)renderPipelineWithDevice:(id<MTLDevice>)device vertexFuncName:(NSString*)vertexFuncName fragmentFuncName:(NSString*)fragmentFuncName;
 
 +(MTLRenderPassDescriptor*)renderPassDescriptorForTexture:(id<MTLTexture>)texture;
 

@@ -22,7 +22,7 @@
     return m;
 }
 
-+(id<MTLRenderPipelineState>)prepareRenderPipelineWithDevice:(id<MTLDevice>)device vertexFuncName:(NSString*)vertexFuncName fragmentFuncName:(NSString*)fragmentFuncName {
++(id<MTLRenderPipelineState>)renderPipelineWithDevice:(id<MTLDevice>)device vertexFuncName:(NSString*)vertexFuncName fragmentFuncName:(NSString*)fragmentFuncName {
     // Shader functions are compiled into the default library.
     id<MTLLibrary> library = [device newDefaultLibrary];
     // Shader functions are compiled when app builds, saving valuable time when app starts up.
