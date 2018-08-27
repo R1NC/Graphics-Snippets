@@ -7,36 +7,54 @@
 //
 
 #include <metal_stdlib>
-#include <simd/simd.h>
 
 using namespace metal;
 
 // Define the data type that corresponds to the layout of the vertex data.
 typedef struct {
-    float4 position;
-    float4 color;
-} In;
+    packed_float3 position;
+    packed_float2 texCoord;
+} VertexIn;
 
 // Define the data type that will be passed from vertex shader to fragment shader.
 typedef struct {
     float4 position [[position]];
-    half4  color;
-} Out;
+    float2 texCoord;
+} VertexOut;
 
-//
+// Uniforms
 typedef struct {
-    float4x4 trans_matrix;
+    float4x4 modelMatrix;
+    float4x4 cameraMatrix;
+    float4x4 projectionMatrix;
 } Uniforms;
 
 // Vertex shader function
-vertex Out vertex_func(device In *vertices [[buffer(0)]], constant Uniforms &uniforms [[buffer(1)]], uint index [[vertex_id]]) {
-    Out out;
-    out.position = uniforms.trans_matrix * vertices[index].position;
-    out.color = half4(vertices[index].color);
+vertex VertexOut vertex_func(const device VertexIn* vertices [[buffer(0)]],
+                             const device Uniforms& uniforms [[buffer(1)]],
+                             unsigned int index [[vertex_id]]) {
+    float4x4 renderedCoordinates = float4x4(float4( -1.0, -1.0, 0.0, 1.0 ),
+                                            float4(  1.0, -1.0, 0.0, 1.0 ),
+                                            float4( -1.0,  1.0, 0.0, 1.0 ),
+                                            float4(  1.0,  1.0, 0.0, 1.0 ));
+    
+    float4x2 textureCoordinates = float4x2(float2( 0.0, 1.0 ),
+                                           float2( 1.0, 1.0 ),
+                                           float2( 0.0, 0.0 ),
+                                           float2( 1.0, 0.0 ));
+    
+    //VertexIn in = vertices[index];
+    VertexOut out;
+    //out.position = uniforms.projectionMatrix * uniforms.cameraMatrix * uniforms.modelMatrix * float4(in.position, 1);
+    out.position = renderedCoordinates[index];
+    //out.texCoord = in.texCoord;
+    out.texCoord = textureCoordinates[index];
     return out;
 }
 
 // Fragment shader function
-fragment half4 fragment_func(Out in [[stage_in]]) {
-    return in.color;
+fragment float4 fragment_func(VertexOut in [[stage_in]],
+                             texture2d<float> tex2d [[texture(0)]],
+                             sampler sampler2d [[sampler(0)]]) {
+    return tex2d.sample(sampler2d, in.texCoord);
 }

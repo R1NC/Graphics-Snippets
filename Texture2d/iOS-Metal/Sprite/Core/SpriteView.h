@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <MetalKit/MetalKit.h>
 
-@interface SpriteView : UIView
+@interface SpriteView : MTKView
 
 @end

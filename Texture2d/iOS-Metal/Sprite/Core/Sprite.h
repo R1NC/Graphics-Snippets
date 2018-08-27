@@ -14,6 +14,7 @@
 @interface Sprite : NSObject
 
 @property(atomic,assign) CGFloat angle, scale, transX, transY;
+@property(atomic,strong) NSString* textureImagePath;
 
 -(instancetype)initWithDevice:(id<MTLDevice>)device;
 

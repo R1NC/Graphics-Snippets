@@ -9,9 +9,7 @@
 #import "SpriteView.h"
 #import "Sprite.h"
 
-@interface SpriteView()
-@property(nonatomic,strong) CAMetalLayer *metalLayer;
-@property(nonatomic,strong) id<CAMetalDrawable> currentDrawable;
+@interface SpriteView()<MTKViewDelegate>
 @property(nonatomic,strong) Sprite* sprite;
 @end
 
@@ -20,34 +18,31 @@
 -(instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
         // An abstraction of GPU. Used to create buffers, textures, function libraries..
-        id<MTLDevice> device = MTLCreateSystemDefaultDevice();
+        self.device = MTLCreateSystemDefaultDevice();
+        self.delegate = self;
+        self.framebufferOnly = YES;
+        self.autoResizeDrawable = YES;
+        self.clearColor = MTLClearColorMake(0, 0, 0, 0);
+        self.colorPixelFormat = MTLPixelFormatBGRA8Unorm;
+        self.contentScaleFactor = UIScreen.mainScreen.scale;
+        self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         
-        // CAMettalLayer to display the contents of a Matal framebuffer.
-        _metalLayer = [CAMetalLayer layer];
-        _metalLayer.frame = frame;
-        _metalLayer.device = device;
-        _metalLayer.pixelFormat = MTLPixelFormatBGRA8Unorm;
-        [self.layer addSublayer:_metalLayer];
+        // Although CALayers are non-opaque by default, CAMetalLayer is opaque by default.
+        // So we need to expressly set layer.opaque to false in order to draw transparent content with Metal.
+        self.layer.opaque = false;
         
-        _sprite = [[Sprite alloc] initWithDevice:device];
-        
-        self.contentScaleFactor = [UIScreen mainScreen].scale;
+        _sprite = [[Sprite alloc] initWithDevice:self.device];
     }
     return self;
 }
 
--(void)drawRect:(CGRect)rect {
-    [_sprite renderDrawable:[self currentDrawable] inRect:rect];
-    _currentDrawable = nil;
+#pragma mark MTKViewDelegate
+
+-(void)mtkView:(MTKView*)view drawableSizeWillChange:(CGSize)size {
 }
 
--(id<CAMetalDrawable>)currentDrawable {
-    // CAMetalDrawable manages a set of textures that are appropriate for rendering into.
-    // It may be nil if we're not on the screen or we've taken too long to render.
-    while (_currentDrawable == nil) {
-        _currentDrawable = [_metalLayer nextDrawable];
-    }
-    return _currentDrawable;
+-(void)drawInMTKView:(MTKView*)view {
+    [_sprite renderDrawable:self.currentDrawable inRect:self.frame];
 }
 
 @end
