@@ -64,7 +64,7 @@ const GLfloat CAMERA_UP_Z = 0.0f;
 
 -(void)drawInRect:(CGRect)rect {
     if (_texture) {
-        [GLUtil bindTextureInfo:_texture channel:GL_TEXTURE0 location:_locTexture];
+        [GLUtil bindTexture:_texture channel:GL_TEXTURE0 location:_locTexture];
         [self updateProjectionMatrixWithRect:rect];
         [self updateModelMatrixWithRect:rect];
         [self updateMatrices2Shader];
@@ -72,7 +72,7 @@ const GLfloat CAMERA_UP_Z = 0.0f;
         // GLKTextureInfo doesn't own any memory beyond a few GLuint's.
         // When you re-assign self.textureInfo, the GLKTextureInfo gets deallocated but the memory used for the pixels is not.
         // That memory is owned by OpenGL and you must call glDeleteTextures to free it.
-        [GLUtil releaseTextureInfo:_texture];
+        [GLUtil releaseTexture:_texture];
     }
 }
 
@@ -89,7 +89,7 @@ const GLfloat CAMERA_UP_Z = 0.0f;
     if (_indexBuffer) {
         glDeleteBuffers(1, &_indexBuffer);
     }
-    [GLUtil releaseTextureInfo:_texture];
+    [GLUtil releaseTexture:_texture];
 }
 
 

@@ -13,12 +13,12 @@
 
 +(GLuint)loadVertexGLSL:(NSString*)vertextGLSL fragmentGLSL:(NSString*)fragmentGLSL;
 
-+(GLKTextureInfo*)textureInfoWithImageFilePath:(NSString*)imageFilePath;
++(GLKTextureInfo*)loadTextureWithImagePath:(NSString*)imagePath;
 
 //+(GLuint)textureWithImage:(UIImage*)image;
 
-+(void)bindTextureInfo:(GLKTextureInfo*)textureInfo channel:(GLenum)channel location:(GLuint)location;
++(void)bindTexture:(GLKTextureInfo*)texture channel:(GLenum)channel location:(GLuint)location;
 
-+(void)releaseTextureInfo:(GLKTextureInfo*)textureInfo;
++(void)releaseTexture:(GLKTextureInfo*)texture;
 
 @end

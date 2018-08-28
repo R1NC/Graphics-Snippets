@@ -166,7 +166,7 @@ typedef NS_ENUM(NSInteger, TextureFormat) {
                 sprite.scale = _frameScale;
                 NSTimeInterval tx = CURRENT_TIME;
                 NSString* imgName = [NSString stringWithFormat:@"%@-%ld", _frameFolder, _frameIndex % _frameCount];
-                sprite.texture = [GLUtil textureInfoWithImageFilePath:[self pathWithFileName:imgName type:[self typeStringWithTextureFormat:_textureFormat]]];
+                sprite.texture = [GLUtil loadTextureWithImagePath:[self pathWithFileName:imgName type:[self typeStringWithTextureFormat:_textureFormat]]];
                 NSLog(@"GLES load %@ cost:%f textureNil:%d", imgName, (CURRENT_TIME - tx), sprite.texture==nil);
             }
         }

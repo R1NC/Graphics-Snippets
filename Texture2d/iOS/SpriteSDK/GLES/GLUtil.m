@@ -10,34 +10,34 @@
 
 @implementation GLUtil
 
-+(void)bindTextureInfo:(GLKTextureInfo*)textureInfo channel:(GLenum)channel location:(GLuint)location {
-    if (textureInfo) {
-        glEnable(textureInfo.target);
-        glActiveTexture(channel);
-        glBindTexture(textureInfo.target, textureInfo.name);
-        GLuint textureID = (GLuint)(channel - GL_TEXTURE0);
-        glUniform1i(location, textureID);
-    }
-}
-
-+(void)releaseTextureInfo:(GLKTextureInfo*)textureInfo {
-    if (textureInfo) {
-        GLuint name = textureInfo.name;
-        glDeleteTextures(1, &name);
-        textureInfo = nil;
-    }
-}
-
-+(GLKTextureInfo*)textureInfoWithImageFilePath:(NSString*)imageFilePath {
-    if (imageFilePath) {
++(GLKTextureInfo*)loadTextureWithImagePath:(NSString*)imagePath {
+    if (imagePath) {
         NSError *error;
         NSLog(@"GL Error = %u", glGetError());//Required to fix a system bug. Or GLKTextureLoader may return nil.
-        GLKTextureInfo* textureInfo = [GLKTextureLoader textureWithContentsOfFile:imageFilePath options:nil error:&error];
+        GLKTextureInfo* textureInfo = [GLKTextureLoader textureWithContentsOfFile:imagePath options:nil error:&error];
         if (!error) {
             return textureInfo;
         }
     }
     return nil;
+}
+
++(void)bindTexture:(GLKTextureInfo*)texture channel:(GLenum)channel location:(GLuint)location {
+    if (texture) {
+        glEnable(texture.target);
+        glActiveTexture(channel);
+        glBindTexture(texture.target, texture.name);
+        GLuint textureID = (GLuint)(channel - GL_TEXTURE0);
+        glUniform1i(location, textureID);
+    }
+}
+
++(void)releaseTexture:(GLKTextureInfo*)texture {
+    if (texture) {
+        GLuint name = texture.name;
+        glDeleteTextures(1, &name);
+        texture = nil;
+    }
 }
 
 /*+(GLuint)textureWithImage:(UIImage*)image {
