@@ -6,12 +6,12 @@ Code snippets of graphics (OpenGL ES /  Metal).
 
 **Android**:
 
-* [<OpenGL ES/>](https://github.com/RincLiu/Graphics-Snippets/tree/master/Texture2d/Android-GLES/java/xyz/rinc/gl/sprite);
+* [x] [OpenGL ES](https://github.com/RincLiu/Graphics-Snippets/tree/master/Texture2d/Android-GLES/java/xyz/rinc/gl/sprite);
 
-* <Vulkan/>;
+* [ ] Vulkan;
 
 **iOS**:
 
-* [<OpenGL ES/>](https://github.com/RincLiu/Graphics-Snippets/tree/master/Texture2d/iOS/SpriteSDK/GLES);
+* [x] [OpenGL ES](https://github.com/RincLiu/Graphics-Snippets/tree/master/Texture2d/iOS/SpriteSDK/GLES);
 
-* [< Metal/>](https://github.com/RincLiu/Graphics-Snippets/tree/master/Texture2d/iOS/SpriteSDK/Metal);
+* [x] [ Metal](https://github.com/RincLiu/Graphics-Snippets/tree/master/Texture2d/iOS/SpriteSDK/Metal);
