@@ -11,12 +11,23 @@
 #import <Metal/Metal.h>
 #import "MetalUtil.h"
 
+typedef struct {
+    packed_float4 position;
+    packed_float2 texCoords;
+} VertexFormat;
+
 const float VERTICES[] = {
-    -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, //TL
-    1.0f, 1.0f, 0.0f, 1.0f, 0.0f, //TR
-    1.0f, -1.0f, 0.0f, 1.0f, 1.0f, //BR
-    -1.0f, -1.0f, 0.0f, 0.0f, 1.0f //BL
+    -1.0f, +1.0f, 0.0f, 1.0f,   0.0f, 0.0f, //TL
+    +1.0f, +1.0f, 0.0f, 1.0f,   1.0f, 0.0f, //TR
+    +1.0f, -1.0f, 0.0f, 1.0f,   1.0f, 1.0f, //BR
+    -1.0f, -1.0f, 0.0f, 1.0f,   0.0f, 1.0f  //BL
 };
+
+typedef struct {
+    matrix_float4x4 modelMatrix;
+    matrix_float4x4 cameraMatrix;
+    matrix_float4x4 projectionMatrix;
+} Uniforms;
 
 const uint16_t INDICES[] = {
     0, 1, 2,
@@ -37,12 +48,6 @@ const float CAMERA_CENTER_Z = 0.0f;
 const float CAMERA_UP_X = 0.0f;
 const float CAMERA_UP_Y = 1.0f;
 const float CAMERA_UP_Z = 0.0f;
-
-typedef struct {
-    matrix_float4x4 modelMatrix;
-    matrix_float4x4 cameraMatrix;
-    matrix_float4x4 projectionMatrix;
-} Uniforms;
 
 @interface Sprite()
 @property(nonatomic,strong) id<MTLDevice> device;
@@ -72,10 +77,11 @@ typedef struct {
         
         [self prepareBuffersWithDevice:device];
         
-        _renderPipelineState = [MetalUtil renderPipelineWithDevice:device vertexFuncName:@"vertex_func" fragmentFuncName:@"fragment_func"];
+        _renderPipelineState = [MetalUtil renderPipelineWithDevice:device vertexFuncName:@"vertex_func" fragmentFuncName:@"fragment_func" vertexDescriptor:[self prepareVertexDescriptor]];
+        
         _samplerState = [MetalUtil samplerWithDevice:device];
         
-        [self setCameraMatrix];
+        //[self setCameraMatrix];
     }
     return self;
 }
@@ -86,11 +92,24 @@ typedef struct {
     _texture = [MetalUtil loadTextureWithImagePath:_textureImagePath device:_device];
     
     if (_texture) {
-        [self updateProjectionMatrixWithRect:rect];
+        //[self updateProjectionMatrixWithRect:rect];
         [self updateModelMatrixWithRect:rect];
         [self updateUniforms];
         [self renderDrawable:drawable];
     }
+}
+
+-(MTLVertexDescriptor*)prepareVertexDescriptor {
+    MTLVertexDescriptor* vertexDescriptor = [MTLVertexDescriptor new];
+    vertexDescriptor.attributes[0].format = MTLVertexFormatFloat4;
+    vertexDescriptor.attributes[0].offset = 0;
+    vertexDescriptor.attributes[0].bufferIndex = 0;
+    vertexDescriptor.attributes[1].format = MTLVertexFormatFloat2;
+    vertexDescriptor.attributes[1].offset = sizeof(vector_float4);
+    vertexDescriptor.attributes[1].bufferIndex = 0;
+    vertexDescriptor.layouts[0].stepFunction = MTLVertexStepFunctionPerVertex;
+    vertexDescriptor.layouts[0].stride = sizeof(VertexFormat);
+    return vertexDescriptor;
 }
 
 -(void)prepareBuffersWithDevice:(id<MTLDevice>)device {
@@ -99,31 +118,27 @@ typedef struct {
     _uniformBuffer = [device newBufferWithLength:sizeof(Uniforms) options:MTLResourceOptionCPUCacheModeDefault];
 }
 
--(void)setCameraMatrix {
-    _uniforms.cameraMatrix = [MetalUtil matrixf44WithGLKMatrix4:GLKMatrix4MakeLookAt(CAMERA_EYE_X, CAMERA_EYE_Y, CAMERA_EYE_Z, CAMERA_CENTER_X, CAMERA_CENTER_Y, CAMERA_CENTER_Z, CAMERA_UP_X, CAMERA_UP_Y, CAMERA_UP_Z)];
-}
-
--(void)updateProjectionMatrixWithRect:(CGRect)rect {
-    float ratio = rect.size.width / rect.size.height;
-    float left = -ratio;
-    float right = ratio;
-    float bottom = -1.0f;
-    float top = 1.0f;
-    float nearZ = 3.0f;
-    float farZ = 7.0f;
-    _uniforms.projectionMatrix = [MetalUtil matrixf44WithGLKMatrix4:GLKMatrix4MakeFrustum(left, right, bottom, top, nearZ, farZ)];
-}
+//-(void)setCameraMatrix {
+//    _uniforms.cameraMatrix = [MetalUtil matrixf44WithGLKMatrix4:GLKMatrix4MakeLookAt(CAMERA_EYE_X, CAMERA_EYE_Y, CAMERA_EYE_Z, CAMERA_CENTER_X, CAMERA_CENTER_Y, CAMERA_CENTER_Z, CAMERA_UP_X, CAMERA_UP_Y, CAMERA_UP_Z)];
+//    _uniforms.cameraMatrix = [MetalUtil matrixf44WithGLKMatrix4:GLKMatrix4Identity];
+//}
+//
+//-(void)updateProjectionMatrixWithRect:(CGRect)rect {
+//    float ratio = rect.size.width / rect.size.height;
+//    float left = -ratio;
+//    float right = ratio;
+//    float bottom = -1.0f;
+//    float top = 1.0f;
+//    float nearZ = 3.0f;
+//    float farZ = 7.0f;
+//    _uniforms.projectionMatrix = [MetalUtil matrixf44WithGLKMatrix4:GLKMatrix4MakeFrustum(left, right, bottom, top, nearZ, farZ)];
+//    _uniforms.projectionMatrix = [MetalUtil matrixf44WithGLKMatrix4:GLKMatrix4Identity];
+//}
 
 -(void)updateModelMatrixWithRect:(CGRect)rect {
     GLKMatrix4 translateMatrix = GLKMatrix4MakeTranslation(_transX, _transY, 0.0);
     GLKMatrix4 rotateMatrix = GLKMatrix4MakeRotation(GLKMathDegreesToRadians(_angle) , 0.0, 0.0, -1.0);
-    GLKMatrix4 scaleMatrix = GLKMatrix4Identity;
-    if (_texture.width > 0 && _texture.height > 0) {
-        int targetSize = MIN(rect.size.width, rect.size.height);
-        float baseScaleX = (float)_texture.width / targetSize;
-        float baseScaleY = (float)_texture.height / targetSize;
-        scaleMatrix = GLKMatrix4MakeScale(baseScaleX * _scale, baseScaleY * _scale, 1.0);
-    }
+    GLKMatrix4 scaleMatrix = GLKMatrix4MakeScale(_scale, _scale, 1.0);
     GLKMatrix4 modelMatrix = GLKMatrix4Multiply(translateMatrix, rotateMatrix);
     modelMatrix = GLKMatrix4Multiply(modelMatrix, scaleMatrix);
     _uniforms.modelMatrix = [MetalUtil matrixf44WithGLKMatrix4:modelMatrix];
@@ -151,8 +166,7 @@ typedef struct {
     [renderEncoder setFragmentTexture:_texture atIndex:0];
     [renderEncoder setFragmentSamplerState:_samplerState atIndex:0];
     
-    [renderEncoder drawIndexedPrimitives:MTLPrimitiveTypeTriangleStrip indexCount:6 indexType:MTLIndexTypeUInt16 indexBuffer:_indexBuffer indexBufferOffset:0];
-    //[renderEncoder drawPrimitives:MTLPrimitiveTypeTriangleStrip vertexStart:0 vertexCount:4 instanceCount:1];
+    [renderEncoder drawIndexedPrimitives:MTLPrimitiveTypeTriangleStrip indexCount:_indexBuffer.length/sizeof(uint16_t) indexType:MTLIndexTypeUInt16 indexBuffer:_indexBuffer indexBufferOffset:0];
     
     [renderEncoder endEncoding];
     [commandBuffer presentDrawable:drawable];
