@@ -6,7 +6,7 @@ Code snippets of graphics (OpenGL ES /  Metal).
 
 **Android**:
 
-* [x] [OpenGL ES](/tree/master/Texture2d/Android-GLES/java/xyz/rinc/gl/sprite);
+* [x] [OpenGL ES](https://github.com/RincLiu/Graphics-Snippets/tree/master/Texture2d/Android-GLES/java/xyz/rinc/gl/sprite);
 
 * [ ] Vulkan;
 
