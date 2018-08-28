@@ -1,16 +1,17 @@
 # Graphics-Snippets
+
 Code snippets of graphics (OpenGL ES /  Metal).
 
 ### Texture2D
 
-#### Android:
+**Android**:
 
-* [OpenGL ES](https://github.com/RincLiu/Graphics-Snippets/tree/master/Texture2d/Android-GLES/java/xyz/rinc/gl/sprite);
+* [<OpenGL ES/>](https://github.com/RincLiu/Graphics-Snippets/tree/master/Texture2d/Android-GLES/java/xyz/rinc/gl/sprite);
 
-* Vulkan;
+* <Vulkan/>;
 
-#### iOS:
+**iOS**:
 
-* [OpenGL ES](https://github.com/RincLiu/Graphics-Snippets/tree/master/Texture2d/iOS/SpriteSDK/GLES);
+* [<OpenGL ES/>](https://github.com/RincLiu/Graphics-Snippets/tree/master/Texture2d/iOS/SpriteSDK/GLES);
 
-* [ Metal](https://github.com/RincLiu/Graphics-Snippets/tree/master/Texture2d/iOS/SpriteSDK/Metal);
+* [< Metal/>](https://github.com/RincLiu/Graphics-Snippets/tree/master/Texture2d/iOS/SpriteSDK/Metal);

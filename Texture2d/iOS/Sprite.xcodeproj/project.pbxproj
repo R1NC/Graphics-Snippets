@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		801A419F21359E610077EC89 /* default.metallib in Resources */ = {isa = PBXBuildFile; fileRef = 801A419E21359E610077EC89 /* default.metallib */; };
+		801A41A221359F0F0077EC89 /* fragment-png.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 801A41A021359F0E0077EC89 /* fragment-png.glsl */; };
+		801A41A321359F0F0077EC89 /* vertex-png.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 801A41A121359F0F0077EC89 /* vertex-png.glsl */; };
 		80EDC8C421354E5A0086A70C /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 80EDC8C321354E5A0086A70C /* AppDelegate.m */; };
 		80EDC8C721354E5A0086A70C /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 80EDC8C621354E5A0086A70C /* ViewController.m */; };
 		80EDC8CA21354E5A0086A70C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 80EDC8C821354E5A0086A70C /* Main.storyboard */; };
@@ -66,6 +69,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		801A419E21359E610077EC89 /* default.metallib */ = {isa = PBXFileReference; lastKnownFileType = "archive.metal-library"; name = default.metallib; path = SpriteSDK.framework/default.metallib; sourceTree = "<group>"; };
+		801A41A021359F0E0077EC89 /* fragment-png.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; name = "fragment-png.glsl"; path = "SpriteSDK.framework/fragment-png.glsl"; sourceTree = "<group>"; };
+		801A41A121359F0F0077EC89 /* vertex-png.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; name = "vertex-png.glsl"; path = "SpriteSDK.framework/vertex-png.glsl"; sourceTree = "<group>"; };
 		80EDC8BF21354E5A0086A70C /* Sprite.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sprite.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		80EDC8C221354E5A0086A70C /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		80EDC8C321354E5A0086A70C /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -134,6 +140,9 @@
 		80EDC8B621354E5A0086A70C = {
 			isa = PBXGroup;
 			children = (
+				801A41A021359F0E0077EC89 /* fragment-png.glsl */,
+				801A41A121359F0F0077EC89 /* vertex-png.glsl */,
+				801A419E21359E610077EC89 /* default.metallib */,
 				80EDC971213572570086A70C /* SpriteSDK */,
 				80EDC8C121354E5A0086A70C /* Sprite */,
 				80EDC8C021354E5A0086A70C /* Products */,
@@ -324,6 +333,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				801A41A221359F0F0077EC89 /* fragment-png.glsl in Resources */,
+				801A41A321359F0F0077EC89 /* vertex-png.glsl in Resources */,
+				801A419F21359E610077EC89 /* default.metallib in Resources */,
 				80EDC8CF21354E5B0086A70C /* LaunchScreen.storyboard in Resources */,
 				80EDC8CC21354E5B0086A70C /* Assets.xcassets in Resources */,
 				80EDC8CA21354E5A0086A70C /* Main.storyboard in Resources */,
