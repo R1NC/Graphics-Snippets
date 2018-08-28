@@ -27,7 +27,7 @@
 
 -(instancetype)initWithMTSpriteView:(MTSpriteView*)spriteView;
 
--(instancetype)initWithGLSpriteView:(GLSpriteView*)spriteView;
+-(instancetype)initWithGLSpriteView:(GLSpriteView*)spriteView __attribute__((deprecated));
 
 -(void)playResource:(NSString*)resource;
 
