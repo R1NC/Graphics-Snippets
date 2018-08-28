@@ -11,4 +11,6 @@
 
 @interface SpriteView : MTKView
 
+@property(nonatomic,strong,readonly) NSMutableArray* sprites;
+
 @end

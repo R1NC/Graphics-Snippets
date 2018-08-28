@@ -20,4 +20,6 @@
 
 -(void)renderDrawable:(id<CAMetalDrawable>)drawable inRect:(CGRect)rect;
 
+-(void)onDestroy;
+
 @end

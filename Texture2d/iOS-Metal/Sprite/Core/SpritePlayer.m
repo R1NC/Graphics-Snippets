@@ -2,13 +2,13 @@
 //  SpritePlayer.m
 //  Sprite
 //
-//  Created by Rinc Liu on 20/8/2018.
+//  Created by Rinc Liu on 28/8/2018.
 //  Copyright © 2018 RINC. All rights reserved.
 //
 
 #import "SpritePlayer.h"
 #import "Sprite.h"
-#import "GLUtil.h"
+#import "MetalUtil.h"
 #import <AVFoundation/AVFoundation.h>
 
 typedef NS_ENUM(NSInteger, TextureFormat) {
@@ -109,7 +109,6 @@ typedef NS_ENUM(NSInteger, TextureFormat) {
                         for (Sprite* sprite in weakSelf.spriteView.sprites) {
                             sprite.scale = 0;
                         }
-                        [weakSelf refreshSpriteView];
                     }
                 });
             }
@@ -132,13 +131,9 @@ typedef NS_ENUM(NSInteger, TextureFormat) {
         
         for (Sprite* sprite in _spriteView.sprites) {
             sprite.scale = _frameScale;
-            NSTimeInterval tx = [[NSDate date] timeIntervalSince1970];
             NSString* imgName = [NSString stringWithFormat:@"%@-%ld", _frameFolder, _frameIndex % _frameCount];
-            sprite.textureInfo = [GLUtil textureInfoWithImageFilePath:[self pathWithFileName:imgName type:[self typeStringWithTextureFormat:_textureFormat]]];
-            NSLog(@"Load png %@ cost:%f textureNil:%d", imgName, ([[NSDate date] timeIntervalSince1970] - tx), sprite.textureInfo==nil);
+            sprite.textureImagePath = [self pathWithFileName:imgName type:[self typeStringWithTextureFormat:_textureFormat]];
         }
-        
-        [self refreshSpriteView];
         
         NSTimeInterval t1 = [[NSDate date] timeIntervalSince1970];
         NSTimeInterval delay = 0;
@@ -152,13 +147,6 @@ typedef NS_ENUM(NSInteger, TextureFormat) {
             [self renderIfNeeded];
         });
     }
-}
-
--(void)refreshSpriteView {
-    __weak typeof(self) weakSelf = self;
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [weakSelf.spriteView setNeedsDisplay];
-    });
 }
 
 -(AVPlayer*)createPlayerWithFile:(NSString*)file {
@@ -214,7 +202,7 @@ typedef NS_ENUM(NSInteger, TextureFormat) {
     }
     [_spriteView.sprites removeAllObjects];
     if (reset) {
-        [_spriteView.sprites addObject:[Sprite new]];
+        [_spriteView.sprites addObject:[[Sprite alloc]initWithDevice:_spriteView.device]];
     }
 }
 

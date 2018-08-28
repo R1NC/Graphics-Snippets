@@ -14,7 +14,9 @@
 
 @interface MetalUtil : NSObject
 
-+(id<MTLRenderPipelineState>)renderPipelineWithDevice:(id<MTLDevice>)device vertexFuncName:(NSString*)vertexFuncName fragmentFuncName:(NSString*)fragmentFuncName vertexDescriptor:(MTLVertexDescriptor*)vertexDescriptor;
++(id<MTLRenderPipelineState>)renderPipelineWithDevice:(id<MTLDevice>)device
+                                            vertexFuncName:(NSString*)vertexFuncName fragmentFuncName:(NSString*)fragmentFuncName
+                                     vertexDescriptor:(MTLVertexDescriptor*)vertexDescriptor;
 
 +(MTLRenderPassDescriptor*)renderPassDescriptorWithTexture:(id<MTLTexture>)texture;
 

@@ -10,7 +10,6 @@
 #import "Sprite.h"
 
 @interface SpriteView()<MTKViewDelegate>
-@property(nonatomic,strong) Sprite* sprite;
 @end
 
 @implementation SpriteView
@@ -31,7 +30,7 @@
         // So we need to expressly set layer.opaque to false in order to draw transparent content with Metal.
         self.layer.opaque = false;
         
-        _sprite = [[Sprite alloc] initWithDevice:self.device];
+        _sprites = [NSMutableArray new];
     }
     return self;
 }
@@ -42,7 +41,9 @@
 }
 
 -(void)drawInMTKView:(MTKView*)view {
-    [_sprite renderDrawable:self.currentDrawable inRect:self.frame];
+    for (Sprite* sprite in _sprites) {
+        [sprite renderDrawable:self.currentDrawable inRect:self.frame];
+    }
 }
 
 @end

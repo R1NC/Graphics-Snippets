@@ -16,7 +16,7 @@ typedef struct {
     packed_float2 texCoords;
 } VertexFormat;
 
-const float VERTICES[] = {
+const float VERTICES_DATA[] = {
     -1.0f, +1.0f, 0.0f, 1.0f,   0.0f, 0.0f, //TL
     +1.0f, +1.0f, 0.0f, 1.0f,   1.0f, 0.0f, //TR
     +1.0f, -1.0f, 0.0f, 1.0f,   1.0f, 1.0f, //BR
@@ -25,29 +25,12 @@ const float VERTICES[] = {
 
 typedef struct {
     matrix_float4x4 modelMatrix;
-    matrix_float4x4 cameraMatrix;
-    matrix_float4x4 projectionMatrix;
 } Uniforms;
 
-const uint16_t INDICES[] = {
+const uint16_t INDICES_DATA[] = {
     0, 1, 2,
     0, 3, 2
 };
-
-// Position the eye behind the origin
-const float CAMERA_EYE_X = 0.0f;
-const float CAMERA_EYE_Y = 0.0f;
-const float CAMERA_EYE_Z = 3.0f;
-
-// We are looking toward the distance
-const float CAMERA_CENTER_X = 0.0f;
-const float CAMERA_CENTER_Y = 0.0f;
-const float CAMERA_CENTER_Z = 0.0f;
-
-// This is where our head would be pointing were we holding the camera.
-const float CAMERA_UP_X = 0.0f;
-const float CAMERA_UP_Y = 1.0f;
-const float CAMERA_UP_Z = 0.0f;
 
 @interface Sprite()
 @property(nonatomic,strong) id<MTLDevice> device;
@@ -70,18 +53,16 @@ const float CAMERA_UP_Z = 0.0f;
         
         _device = device;
         
-        _textureImagePath = [[NSBundle mainBundle] pathForResource:@"bomb" ofType:@"png"];
-        
         // Commands are submitted to a Metal device through its associated command queue.
         _commandQueue = [device newCommandQueue];
         
         [self prepareBuffersWithDevice:device];
         
-        _renderPipelineState = [MetalUtil renderPipelineWithDevice:device vertexFuncName:@"vertex_func" fragmentFuncName:@"fragment_func" vertexDescriptor:[self prepareVertexDescriptor]];
+        _renderPipelineState = [MetalUtil renderPipelineWithDevice:device
+                                                         vertexFuncName:@"vertex_func" fragmentFuncName:@"fragment_func"
+                                                  vertexDescriptor:[self prepareVertexDescriptor]];
         
         _samplerState = [MetalUtil samplerWithDevice:device];
-        
-        //[self setCameraMatrix];
     }
     return self;
 }
@@ -89,14 +70,15 @@ const float CAMERA_UP_Z = 0.0f;
 -(void)renderDrawable:(id<CAMetalDrawable>)drawable inRect:(CGRect)rect {
     if (!_renderPipelineState || !drawable || !_textureImagePath) return;
     
-    _texture = [MetalUtil loadTextureWithImagePath:_textureImagePath device:_device];
-    
-    if (_texture) {
-        //[self updateProjectionMatrixWithRect:rect];
+    if ((_texture = [MetalUtil loadTextureWithImagePath:_textureImagePath device:_device]) != nil) {
         [self updateModelMatrixWithRect:rect];
-        [self updateUniforms];
+        [self syncUniforms];
         [self renderDrawable:drawable];
     }
+}
+
+-(void)onDestroy {
+    
 }
 
 -(MTLVertexDescriptor*)prepareVertexDescriptor {
@@ -113,27 +95,10 @@ const float CAMERA_UP_Z = 0.0f;
 }
 
 -(void)prepareBuffersWithDevice:(id<MTLDevice>)device {
-    _vertexBuffer = [device newBufferWithBytes:VERTICES length:sizeof(VERTICES) options:MTLResourceOptionCPUCacheModeDefault];
-    _indexBuffer = [device newBufferWithBytes:INDICES length:sizeof(INDICES) options:MTLResourceOptionCPUCacheModeDefault];
+    _vertexBuffer = [device newBufferWithBytes:VERTICES_DATA length:sizeof(VERTICES_DATA) options:MTLResourceOptionCPUCacheModeDefault];
+    _indexBuffer = [device newBufferWithBytes:INDICES_DATA length:sizeof(INDICES_DATA) options:MTLResourceOptionCPUCacheModeDefault];
     _uniformBuffer = [device newBufferWithLength:sizeof(Uniforms) options:MTLResourceOptionCPUCacheModeDefault];
 }
-
-//-(void)setCameraMatrix {
-//    _uniforms.cameraMatrix = [MetalUtil matrixf44WithGLKMatrix4:GLKMatrix4MakeLookAt(CAMERA_EYE_X, CAMERA_EYE_Y, CAMERA_EYE_Z, CAMERA_CENTER_X, CAMERA_CENTER_Y, CAMERA_CENTER_Z, CAMERA_UP_X, CAMERA_UP_Y, CAMERA_UP_Z)];
-//    _uniforms.cameraMatrix = [MetalUtil matrixf44WithGLKMatrix4:GLKMatrix4Identity];
-//}
-//
-//-(void)updateProjectionMatrixWithRect:(CGRect)rect {
-//    float ratio = rect.size.width / rect.size.height;
-//    float left = -ratio;
-//    float right = ratio;
-//    float bottom = -1.0f;
-//    float top = 1.0f;
-//    float nearZ = 3.0f;
-//    float farZ = 7.0f;
-//    _uniforms.projectionMatrix = [MetalUtil matrixf44WithGLKMatrix4:GLKMatrix4MakeFrustum(left, right, bottom, top, nearZ, farZ)];
-//    _uniforms.projectionMatrix = [MetalUtil matrixf44WithGLKMatrix4:GLKMatrix4Identity];
-//}
 
 -(void)updateModelMatrixWithRect:(CGRect)rect {
     GLKMatrix4 translateMatrix = GLKMatrix4MakeTranslation(_transX, _transY, 0.0);
@@ -144,7 +109,7 @@ const float CAMERA_UP_Z = 0.0f;
     _uniforms.modelMatrix = [MetalUtil matrixf44WithGLKMatrix4:modelMatrix];
 }
 
--(void)updateUniforms {
+-(void)syncUniforms {
     void *bufferPointer = [_uniformBuffer contents];
     memcpy(bufferPointer, &_uniforms, sizeof(Uniforms));
 }

@@ -10,6 +10,6 @@
 
 @interface SpriteView : GLKView
 
-@property(nonatomic,strong) NSMutableArray* sprites;
+@property(nonatomic,strong,readonly) NSMutableArray* sprites;
 
 @end

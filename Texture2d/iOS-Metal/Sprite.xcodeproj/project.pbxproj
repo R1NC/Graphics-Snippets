@@ -22,6 +22,7 @@
 		80EDC7DC213143670086A70C /* MetalUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 80EDC7DB213143670086A70C /* MetalUtil.m */; };
 		80EDC7E2213156CD0086A70C /* Sprite.metal in Sources */ = {isa = PBXBuildFile; fileRef = 80EDC7E1213156CD0086A70C /* Sprite.metal */; };
 		80EDC7E42133DF1F0086A70C /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 80EDC7E32133DF1F0086A70C /* GLKit.framework */; };
+		80EDC7E9213545800086A70C /* SpritePlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 80EDC7E8213545800086A70C /* SpritePlayer.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -47,6 +48,8 @@
 		80EDC7DB213143670086A70C /* MetalUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MetalUtil.m; sourceTree = "<group>"; };
 		80EDC7E1213156CD0086A70C /* Sprite.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; name = Sprite.metal; path = "../../../Shader-Metal/Sprite.metal"; sourceTree = "<group>"; };
 		80EDC7E32133DF1F0086A70C /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
+		80EDC7E7213545800086A70C /* SpritePlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpritePlayer.h; sourceTree = "<group>"; };
+		80EDC7E8213545800086A70C /* SpritePlayer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SpritePlayer.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +112,8 @@
 				80EDC69C212EB8100086A70C /* SpriteView.m */,
 				80EDC7DA213143670086A70C /* MetalUtil.h */,
 				80EDC7DB213143670086A70C /* MetalUtil.m */,
+				80EDC7E7213545800086A70C /* SpritePlayer.h */,
+				80EDC7E8213545800086A70C /* SpritePlayer.m */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -200,6 +205,7 @@
 				80EDC7E2213156CD0086A70C /* Sprite.metal in Sources */,
 				80EDC69D212EB8100086A70C /* SpriteView.m in Sources */,
 				80EDC7DC213143670086A70C /* MetalUtil.m in Sources */,
+				80EDC7E9213545800086A70C /* SpritePlayer.m in Sources */,
 				80EDC694212EB4FD0086A70C /* main.m in Sources */,
 				80EDC686212EB4FB0086A70C /* AppDelegate.m in Sources */,
 			);

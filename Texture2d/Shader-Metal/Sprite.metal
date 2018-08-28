@@ -25,8 +25,6 @@ struct VertexOut {
 // Uniforms
 struct Uniforms {
     float4x4 modelMatrix;
-    float4x4 cameraMatrix;
-    float4x4 projectionMatrix;
 };
 
 // Vertex shader function
@@ -35,7 +33,7 @@ vertex VertexOut vertex_func(constant VertexIn* vertices [[buffer(0)]],
                              ushort index [[vertex_id]]) {
     VertexIn in = vertices[index];
     VertexOut out;
-    out.position = /*uniforms.projectionMatrix * uniforms.cameraMatrix * */uniforms.modelMatrix * float4(in.position);
+    out.position = uniforms.modelMatrix * float4(in.position);
     out.texCoords = in.texCoords;
     return out;
 }

@@ -10,7 +10,10 @@
 
 @implementation MetalUtil
 
-+(id<MTLRenderPipelineState>)renderPipelineWithDevice:(id<MTLDevice>)device vertexFuncName:(NSString*)vertexFuncName fragmentFuncName:(NSString*)fragmentFuncName vertexDescriptor:(MTLVertexDescriptor *)vertexDescriptor {
++(id<MTLRenderPipelineState>)renderPipelineWithDevice:(id<MTLDevice>)device
+                                            vertexFuncName:(NSString*)vertexFuncName fragmentFuncName:(NSString*)fragmentFuncName
+                                     vertexDescriptor:(MTLVertexDescriptor *)vertexDescriptor {
+    NSError* err = nil;
     // Shader functions are compiled into the default library.
     id<MTLLibrary> library = [device newDefaultLibrary];
     // Shader functions are compiled when app builds, saving valuable time when app starts up.
@@ -25,10 +28,10 @@
     [renderPipelineDescriptor setVertexFunction:vertexProgram];
     [renderPipelineDescriptor setFragmentFunction:fragmentProgram];
     
-    NSError* err = nil;
     id<MTLRenderPipelineState> renderPipelineState = [device newRenderPipelineStateWithDescriptor:renderPipelineDescriptor error:&err];
     if (err) {
-        NSLog(@"Failed to create render pipeline: %@", err);
+        NSLog(@"Failed to create renderPipelineState: %@", err);
+        return nil;
     }
     return renderPipelineState;
 }

@@ -8,26 +8,31 @@
 
 #import "ViewController.h"
 #import "SpriteView.h"
+#import "SpritePlayer.h"
 
 @interface ViewController ()
-
+@property(nonatomic,strong) SpritePlayer* spritePlayer;
 @end
 
 @implementation ViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
-    SpriteView* spriteView = [[SpriteView alloc]initWithFrame:self.view.frame];
+    SpriteView* spriteView = [[SpriteView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     [self.view addSubview:spriteView];
+    _spritePlayer = [[SpritePlayer alloc]initWithSpriteView:spriteView];
+    [_spritePlayer playResource:@"bomb"];
     self.view.backgroundColor = [UIColor whiteColor];
 }
 
+-(void)viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
+    [_spritePlayer onDestroy];
+}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
 
 @end
