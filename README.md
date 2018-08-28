@@ -5,7 +5,7 @@ Code snippets of graphics (OpenGL ES /  Metal).
 
 #### Android:
 
-* [OpenGL ES](https://github.com/RincLiu/Graphics-Snippets/tree/master/Texture2d/Android-GLES);
+* [OpenGL ES](https://github.com/RincLiu/Graphics-Snippets/tree/master/Texture2d/Android-GLES/java/xyz/rinc/gl/sprite);
 
 * Vulkan;
 
