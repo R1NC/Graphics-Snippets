@@ -13,6 +13,8 @@
 #import "GLUtil.h"
 #import <AVFoundation/AVFoundation.h>
 
+#define CURRENT_TIME [[NSDate date] timeIntervalSince1970]
+
 typedef NS_ENUM(NSInteger, TextureFormat) {
     TextureFormatPNG,
     TextureFormatPVR
@@ -140,7 +142,7 @@ typedef NS_ENUM(NSInteger, TextureFormat) {
 
 -(void)renderIfNeeded {
     if (!_paused && !_destroyed && (_frameIndex <= _frameCount - 1)) {
-        NSTimeInterval t0 = [[NSDate date] timeIntervalSince1970];
+        NSTimeInterval t0 = CURRENT_TIME;
         
         for (AudioDuration* ad in _audioMap.allKeys) {
             AVPlayer* player = _audioMap[ad];
@@ -154,24 +156,24 @@ typedef NS_ENUM(NSInteger, TextureFormat) {
         if (_mtSpriteView) {
             for (MTSprite* sprite in _mtSpriteView.sprites) {
                 sprite.scale = _frameScale;
-                NSTimeInterval tx = [[NSDate date] timeIntervalSince1970];
+                NSTimeInterval tx = CURRENT_TIME;
                 NSString* imgName = [NSString stringWithFormat:@"%@-%ld", _frameFolder, _frameIndex % _frameCount];
                 sprite.texture = [MTUtil loadTextureWithImagePath:[self pathWithFileName:imgName type:[self typeStringWithTextureFormat:_textureFormat]] device:_mtSpriteView.device];
-                NSLog(@"Metal load png %@ cost:%f textureNil:%d", imgName, ([[NSDate date] timeIntervalSince1970] - tx), sprite.texture==nil);
+                NSLog(@"Metal load %@ cost:%f textureNil:%d", imgName, (CURRENT_TIME - tx), sprite.texture==nil);
             }
         } else if (_glSpriteView) {
             for (GLSprite* sprite in _glSpriteView.sprites) {
                 sprite.scale = _frameScale;
-                NSTimeInterval tx = [[NSDate date] timeIntervalSince1970];
+                NSTimeInterval tx = CURRENT_TIME;
                 NSString* imgName = [NSString stringWithFormat:@"%@-%ld", _frameFolder, _frameIndex % _frameCount];
                 sprite.texture = [GLUtil textureInfoWithImageFilePath:[self pathWithFileName:imgName type:[self typeStringWithTextureFormat:_textureFormat]]];
-                NSLog(@"GLES load png %@ cost:%f textureNil:%d", imgName, ([[NSDate date] timeIntervalSince1970] - tx), sprite.texture==nil);
+                NSLog(@"GLES load %@ cost:%f textureNil:%d", imgName, (CURRENT_TIME - tx), sprite.texture==nil);
             }
         }
         
         [self refreshSpriteView];
         
-        NSTimeInterval t1 = [[NSDate date] timeIntervalSince1970];
+        NSTimeInterval t1 = CURRENT_TIME;
         NSTimeInterval delay = 0;
         if (t1 - t0 < _frameDuration) {
             delay = _frameDuration + t0 - t1;
