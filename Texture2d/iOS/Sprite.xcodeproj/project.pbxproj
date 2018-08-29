@@ -42,7 +42,9 @@
 		80EDC999213572A90086A70C /* GLSpriteView.m in Sources */ = {isa = PBXBuildFile; fileRef = 80EDC993213572A90086A70C /* GLSpriteView.m */; };
 		80EDC99C213572C20086A70C /* fragment-png.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 80EDC99A213572C20086A70C /* fragment-png.glsl */; };
 		80EDC99D213572C20086A70C /* vertex-png.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 80EDC99B213572C20086A70C /* vertex-png.glsl */; };
-		80EDCA28213576DA0086A70C /* SpriteSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 80EDCA27213576D90086A70C /* SpriteSDK.framework */; };
+		80EDCC082136640A0086A70C /* SpriteViewBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 80EDCC062136640A0086A70C /* SpriteViewBase.h */; };
+		80EDCC092136640A0086A70C /* SpriteViewBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 80EDCC072136640A0086A70C /* SpriteViewBase.m */; };
+		80EDCC0B2136741C0086A70C /* SpriteSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 80EDC957213571490086A70C /* SpriteSDK.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -111,6 +113,8 @@
 		80EDC99B213572C20086A70C /* vertex-png.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "vertex-png.glsl"; path = "../Shader-GLES/vertex-png.glsl"; sourceTree = "<group>"; };
 		80EDCA25213576BE0086A70C /* default.metallib */ = {isa = PBXFileReference; lastKnownFileType = "archive.metal-library"; name = default.metallib; path = SpriteSDK.framework/default.metallib; sourceTree = "<group>"; };
 		80EDCA27213576D90086A70C /* SpriteSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SpriteSDK.framework; sourceTree = "<group>"; };
+		80EDCC062136640A0086A70C /* SpriteViewBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SpriteViewBase.h; path = SpriteSDK/SpriteViewBase.h; sourceTree = "<group>"; };
+		80EDCC072136640A0086A70C /* SpriteViewBase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = SpriteViewBase.m; path = SpriteSDK/SpriteViewBase.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,7 +122,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				80EDCA28213576DA0086A70C /* SpriteSDK.framework in Frameworks */,
+				80EDCC0B2136741C0086A70C /* SpriteSDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -196,6 +200,8 @@
 				80EDC978213572840086A70C /* SpriteSDK.h */,
 				80EDC976213572840086A70C /* SpriteBase.h */,
 				80EDC979213572840086A70C /* SpriteBase.m */,
+				80EDCC062136640A0086A70C /* SpriteViewBase.h */,
+				80EDCC072136640A0086A70C /* SpriteViewBase.m */,
 				80EDC977213572840086A70C /* SpritePlayer.h */,
 				80EDC974213572840086A70C /* SpritePlayer.m */,
 				80EDC972213572690086A70C /* Metal */,
@@ -247,6 +253,7 @@
 				80EDC994213572A90086A70C /* GLUtil.h in Headers */,
 				80EDC98B2135729A0086A70C /* MTSprite.h in Headers */,
 				80EDC996213572A90086A70C /* GLSprite.h in Headers */,
+				80EDCC082136640A0086A70C /* SpriteViewBase.h in Headers */,
 				80EDC9892135729A0086A70C /* MTUtil.h in Headers */,
 				80EDC97C213572840086A70C /* SpriteBase.h in Headers */,
 			);
@@ -371,6 +378,7 @@
 			files = (
 				80EDC98A2135729A0086A70C /* MTSpriteView.m in Sources */,
 				80EDC98D2135729A0086A70C /* MTSprite.m in Sources */,
+				80EDCC092136640A0086A70C /* SpriteViewBase.m in Sources */,
 				80EDC999213572A90086A70C /* GLSpriteView.m in Sources */,
 				80EDC97A213572840086A70C /* SpritePlayer.m in Sources */,
 				80EDC97F213572840086A70C /* SpriteBase.m in Sources */,
@@ -525,6 +533,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 5TNCWX532Z;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -546,6 +555,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 5TNCWX532Z;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -566,6 +576,7 @@
 		80EDC961213571490086A70C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -594,6 +605,7 @@
 		80EDC962213571490086A70C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;

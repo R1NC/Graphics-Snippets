@@ -9,7 +9,8 @@
 #import "MTSpriteView.h"
 #import "MTSprite.h"
 
-@interface MTSpriteView()<MTKViewDelegate>
+@interface MTSpriteView()
+@property(nonatomic,strong) CAMetalLayer* metalLayer;
 @end
 
 @implementation MTSpriteView
@@ -17,33 +18,30 @@
 -(instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
         // An abstraction of GPU. Used to create buffers, textures, function libraries..
-        self.device = MTLCreateSystemDefaultDevice();
-        self.delegate = self;
-        self.framebufferOnly = YES;
-        self.autoResizeDrawable = YES;
-        self.clearColor = MTLClearColorMake(0, 0, 0, 0);
-        self.colorPixelFormat = MTLPixelFormatBGRA8Unorm;
-        self.contentScaleFactor = UIScreen.mainScreen.scale;
-        self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        _device = MTLCreateSystemDefaultDevice();
         
-        // Although CALayers are non-opaque by default, CAMetalLayer is opaque by default.
-        // So we need to expressly set layer.opaque to false in order to draw transparent content with Metal.
-        self.layer.opaque = false;
-        
-        _sprites = [NSMutableArray new];
+        // CAMetalLayer is a subclass of CALayer that knows how to display the contents of a Metal framebuffer.
+        _metalLayer = [CAMetalLayer layer];
+        _metalLayer.frame = self.bounds;
+        _metalLayer.opaque = NO;// Make layer transparent
+        _metalLayer.device = _device;
+        _metalLayer.pixelFormat = MTLPixelFormatBGRA8Unorm;
+        [self.layer addSublayer:_metalLayer];
     }
     return self;
 }
 
-#pragma mark MTKViewDelegate
-
--(void)mtkView:(MTKView*)view drawableSizeWillChange:(CGSize)size {
+-(void)drawRect:(CGRect)rect {
+    [super drawRect:rect];
+    
+    for (MTSprite* sprite in super.sprites) {
+        // In order to draw into the Metal layer, we first need to get a ‘drawable’ from the layer.
+        // The drawable object manages a set of textures that are appropriate for rendering into.
+        [sprite renderDrawable:[_metalLayer nextDrawable] inRect:rect];
+    }
 }
 
--(void)drawInMTKView:(MTKView*)view {
-    for (MTSprite* sprite in _sprites) {
-        [sprite renderDrawable:self.currentDrawable inRect:self.frame];
-    }
+-(void)onDestroy {
 }
 
 @end

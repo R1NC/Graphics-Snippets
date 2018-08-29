@@ -12,4 +12,8 @@
 
 @property(nonatomic,strong,readonly) NSMutableArray* sprites;
 
+-(instancetype)initWithFrame:(CGRect)frame;
+
+-(void)onDestroy;
+
 @end

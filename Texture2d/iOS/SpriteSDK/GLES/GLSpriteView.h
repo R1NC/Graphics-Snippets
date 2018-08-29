@@ -6,11 +6,9 @@
 //  Copyright © 2018 RINC. All rights reserved.
 //
 
-#import <GLKit/GLKit.h>
+#import "SpriteViewBase.h"
 
 __deprecated_msg("OpenGL ES API is deprecated, use Metal API 'MTSpriteView' instead.")
-@interface GLSpriteView : GLKView
-
-@property(nonatomic,strong,readonly) NSMutableArray* sprites;
+@interface GLSpriteView : SpriteViewBase
 
 @end

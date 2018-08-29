@@ -6,11 +6,11 @@
 //  Copyright © 2018 RINC. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-#import <MetalKit/MetalKit.h>
+#import <Metal/Metal.h>
+#import "SpriteViewBase.h"
 
-@interface MTSpriteView : MTKView
+@interface MTSpriteView : SpriteViewBase
 
-@property(nonatomic,strong,readonly) NSMutableArray* sprites;
+@property(nonatomic,strong,readonly) id<MTLDevice> device;
 
 @end

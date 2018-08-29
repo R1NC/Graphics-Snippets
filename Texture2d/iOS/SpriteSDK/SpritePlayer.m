@@ -34,8 +34,7 @@ typedef NS_ENUM(NSInteger, TextureFormat) {
 @end
 
 @interface SpritePlayer()
-@property(nonatomic,strong) MTSpriteView* mtSpriteView;
-@property(nonatomic,strong) GLSpriteView* glSpriteView;
+@property(nonatomic,strong) SpriteViewBase* spriteView;
 @property(nonatomic,copy) NSString* frameFolder;
 @property(nonatomic,assign) NSInteger frameIndex, frameCount;
 @property(nonatomic,assign) BOOL rendering, paused, destroyed;
@@ -49,7 +48,7 @@ typedef NS_ENUM(NSInteger, TextureFormat) {
 
 -(instancetype)initWithMTSpriteView:(MTSpriteView*)mtSpriteView {
     if (self = [super init]) {
-        _mtSpriteView = mtSpriteView;
+        _spriteView = mtSpriteView;
         [self initialize];
     }
     return self;
@@ -57,7 +56,7 @@ typedef NS_ENUM(NSInteger, TextureFormat) {
 
 -(instancetype)initWithGLSpriteView:(GLSpriteView*)glSpriteView {
     if (self = [super init]) {
-        _glSpriteView = glSpriteView;
+        _spriteView = glSpriteView;
         [self initialize];
     }
     return self;
@@ -94,6 +93,7 @@ typedef NS_ENUM(NSInteger, TextureFormat) {
 
 -(void)onDestroy {
     [self releaseSprites:false];
+    [_spriteView onDestroy];
     [self pauseAllAudios];
     [self releaseAllAudios];
     _destroyed = YES;
@@ -125,19 +125,16 @@ typedef NS_ENUM(NSInteger, TextureFormat) {
             }
         }
         
-        if (_mtSpriteView) {
-            for (MTSprite* sprite in _mtSpriteView.sprites) {
-                sprite.scale = _frameScale;
-                NSTimeInterval tx = CURRENT_TIME_MILLIS;
-                sprite.texture = [MTUtil loadTextureWithImagePath:[self imagePathWithFolder:_frameFolder index:(_frameIndex%_frameCount) format:_textureFormat] device:_mtSpriteView.device];
-                NSLog(@"Metal load %@-%ld cost:%fms textureNil:%d", _frameFolder, (_frameIndex%_frameCount), (CURRENT_TIME_MILLIS - tx), sprite.texture==nil);
-            }
-        } else if (_glSpriteView) {
-            for (GLSprite* sprite in _glSpriteView.sprites) {
-                sprite.scale = _frameScale;
-                NSTimeInterval tx = CURRENT_TIME_MILLIS;
-                sprite.texture = [GLUtil loadTextureWithImagePath:[self imagePathWithFolder:_frameFolder index:(_frameIndex%_frameCount) format:_textureFormat]];
-                NSLog(@"GLES load %@-%ld cost:%fms textureNil:%d", _frameFolder, (_frameIndex%_frameCount), (CURRENT_TIME_MILLIS - tx), sprite.texture==nil);
+        for (SpriteBase* sprite in _spriteView.sprites) {
+            sprite.scale = _frameScale;
+            NSTimeInterval tx = CURRENT_TIME_MILLIS;
+            NSString* imgPath = [self imagePathWithFolder:_frameFolder index:(_frameIndex%_frameCount) format:_textureFormat];
+            if ([_spriteView isKindOfClass:[MTSpriteView class]]) {
+                ((MTSprite*)sprite).texture = [MTUtil loadTextureWithImagePath:imgPath device:((MTSpriteView*)_spriteView).device];
+                NSLog(@"Metal load %@-%ld cost:%fms, textureNil:%d", _frameFolder, (_frameIndex%_frameCount), (CURRENT_TIME_MILLIS - tx), ((MTSprite*)sprite).texture==nil);
+            } else if ([_spriteView isKindOfClass:[GLSpriteView class]]) {
+                ((GLSprite*)sprite).texture = [GLUtil loadTextureWithImagePath:imgPath];
+                NSLog(@"GLES load %@-%ld cost:%fms, textureNil:%d", _frameFolder, (_frameIndex%_frameCount), (CURRENT_TIME_MILLIS - tx), ((GLSprite*)sprite).texture==nil);
             }
         }
         
@@ -165,14 +162,8 @@ typedef NS_ENUM(NSInteger, TextureFormat) {
                     if (weakSelf.delegate) [weakSelf.delegate onSpritePlayerPaused];
                 } else {
                     if (weakSelf.delegate) [weakSelf.delegate onSpritePlayerStopped];
-                    if (weakSelf.mtSpriteView) {
-                        for (MTSprite* sprite in weakSelf.mtSpriteView.sprites) {
-                            sprite.scale = 0;
-                        }
-                    } else if (weakSelf.glSpriteView) {
-                        for (GLSprite* sprite in weakSelf.glSpriteView.sprites) {
-                            sprite.scale = 0;
-                        }
+                    for (SpriteBase* sprite in weakSelf.spriteView.sprites) {
+                        sprite.scale = 0;
                     }
                     [weakSelf refreshSpriteView];
                 }
@@ -194,11 +185,7 @@ typedef NS_ENUM(NSInteger, TextureFormat) {
 -(void)refreshSpriteView {
     __weak typeof(self) weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (weakSelf.mtSpriteView) {
-            [weakSelf.mtSpriteView setNeedsDisplay];
-        } else if (weakSelf.glSpriteView) {
-            [weakSelf.glSpriteView setNeedsDisplay];
-        }
+        [weakSelf.spriteView setNeedsDisplay];
     });
 }
 
@@ -250,21 +237,15 @@ typedef NS_ENUM(NSInteger, TextureFormat) {
 }
 
 -(void)releaseSprites:(BOOL)reset {
-    if (_mtSpriteView) {
-        for (MTSprite* sprite in _mtSpriteView.sprites) {
-            [sprite onDestroy];
-        }
-        [_mtSpriteView.sprites removeAllObjects];
-        if (reset) {
-            [_mtSpriteView.sprites addObject:[[MTSprite alloc]initWithDevice:_mtSpriteView.device]];
-        }
-    } else if (_glSpriteView) {
-        for (GLSprite* sprite in _glSpriteView.sprites) {
-            [sprite onDestroy];
-        }
-        [_glSpriteView.sprites removeAllObjects];
-        if (reset) {
-            [_glSpriteView.sprites addObject:[GLSprite new]];
+    for (SpriteBase* sprite in _spriteView.sprites) {
+        [sprite onDestroy];
+    }
+    [_spriteView.sprites removeAllObjects];
+    if (reset) {
+        if ([_spriteView isKindOfClass:[MTSpriteView class]]) {
+            [_spriteView.sprites addObject:[[MTSprite alloc]initWithDevice:((MTSpriteView*)_spriteView).device]];
+        } else if ([_spriteView isKindOfClass:[GLSpriteView class]]) {
+            [_spriteView.sprites addObject:[GLSprite new]];
         }
     }
 }
