@@ -13,7 +13,7 @@
 #import "GLUtil.h"
 #import <AVFoundation/AVFoundation.h>
 
-#define CURRENT_TIME [[NSDate date] timeIntervalSince1970]
+#define CURRENT_TIME_MILLIS [[NSDate date]timeIntervalSince1970]*1000
 
 typedef NS_ENUM(NSInteger, TextureFormat) {
     TextureFormatPNG,
@@ -79,11 +79,6 @@ typedef NS_ENUM(NSInteger, TextureFormat) {
         if ([self parseConfig]) {
             weakSelf.paused = NO;
             [self startRender];
-            if (weakSelf.delegate) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [weakSelf.delegate onSproitePlayerStarted];
-                });
-            }
         }
     });
 }
@@ -106,43 +101,20 @@ typedef NS_ENUM(NSInteger, TextureFormat) {
 
 -(void)startRender {
     if (_rendering || !_frameFolder || _frameCount <= 0 || (_frameIndex > _frameCount - 1)) return;
-    if (!_paused) {
-        if (_delegate) [_delegate onSproitePlayerResumed];
+    if (_paused) {
+        if (_delegate) [_delegate onSpritePlayerResumed];
         _paused = NO;
+    } else {
+        if (_delegate) [_delegate onSpritePlayerStarted];
     }
-    __weak typeof(self) weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
         [self renderIfNeeded];
-        
-        weakSelf.rendering = NO;
-        [self pauseAllAudios];
-        if (!weakSelf.destroyed) {
-            if (weakSelf.delegate) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    if (weakSelf.paused) {
-                        [weakSelf.delegate onSproitePlayerPaused];
-                    } else {
-                        [weakSelf.delegate onSproitePlayerStopped];
-                        if (weakSelf.mtSpriteView) {
-                            for (MTSprite* sprite in weakSelf.mtSpriteView.sprites) {
-                                sprite.scale = 0;
-                            }
-                        } else if (weakSelf.glSpriteView) {
-                            for (GLSprite* sprite in weakSelf.glSpriteView.sprites) {
-                                sprite.scale = 0;
-                            }
-                        }
-                        [weakSelf refreshSpriteView];
-                    }
-                });
-            }
-        }
     });
 }
 
 -(void)renderIfNeeded {
     if (!_paused && !_destroyed && (_frameIndex <= _frameCount - 1)) {
-        NSTimeInterval t0 = CURRENT_TIME;
+        NSTimeInterval t0 = CURRENT_TIME_MILLIS;
         
         for (AudioDuration* ad in _audioMap.allKeys) {
             AVPlayer* player = _audioMap[ad];
@@ -156,34 +128,66 @@ typedef NS_ENUM(NSInteger, TextureFormat) {
         if (_mtSpriteView) {
             for (MTSprite* sprite in _mtSpriteView.sprites) {
                 sprite.scale = _frameScale;
-                NSTimeInterval tx = CURRENT_TIME;
-                NSString* imgName = [NSString stringWithFormat:@"%@-%ld", _frameFolder, _frameIndex % _frameCount];
-                sprite.texture = [MTUtil loadTextureWithImagePath:[self pathWithFileName:imgName type:[self typeStringWithTextureFormat:_textureFormat]] device:_mtSpriteView.device];
-                NSLog(@"Metal load %@ cost:%f textureNil:%d", imgName, (CURRENT_TIME - tx), sprite.texture==nil);
+                NSTimeInterval tx = CURRENT_TIME_MILLIS;
+                sprite.texture = [MTUtil loadTextureWithImagePath:[self imagePathWithFolder:_frameFolder index:(_frameIndex%_frameCount) format:_textureFormat] device:_mtSpriteView.device];
+                NSLog(@"Metal load %@-%ld cost:%fms textureNil:%d", _frameFolder, (_frameIndex%_frameCount), (CURRENT_TIME_MILLIS - tx), sprite.texture==nil);
             }
         } else if (_glSpriteView) {
             for (GLSprite* sprite in _glSpriteView.sprites) {
                 sprite.scale = _frameScale;
-                NSTimeInterval tx = CURRENT_TIME;
-                NSString* imgName = [NSString stringWithFormat:@"%@-%ld", _frameFolder, _frameIndex % _frameCount];
-                sprite.texture = [GLUtil loadTextureWithImagePath:[self pathWithFileName:imgName type:[self typeStringWithTextureFormat:_textureFormat]]];
-                NSLog(@"GLES load %@ cost:%f textureNil:%d", imgName, (CURRENT_TIME - tx), sprite.texture==nil);
+                NSTimeInterval tx = CURRENT_TIME_MILLIS;
+                sprite.texture = [GLUtil loadTextureWithImagePath:[self imagePathWithFolder:_frameFolder index:(_frameIndex%_frameCount) format:_textureFormat]];
+                NSLog(@"GLES load %@-%ld cost:%fms textureNil:%d", _frameFolder, (_frameIndex%_frameCount), (CURRENT_TIME_MILLIS - tx), sprite.texture==nil);
             }
         }
         
         [self refreshSpriteView];
         
-        NSTimeInterval t1 = CURRENT_TIME;
+        NSTimeInterval t1 = CURRENT_TIME_MILLIS;
         NSTimeInterval delay = 0;
         if (t1 - t0 < _frameDuration) {
             delay = _frameDuration + t0 - t1;
             _frameIndex++;
         } else {
-            _frameIndex += (t1 - t0) / _frameDuration;
+            _frameIndex += _skipFrame ? (t1 - t0) / _frameDuration : 1;
         }
+        
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay/1000 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [self renderIfNeeded];
         });
+    } else {
+        _rendering = NO;
+        [self pauseAllAudios];
+        if (!_destroyed) {
+            __weak typeof(self) weakSelf = self;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (weakSelf.paused) {
+                    if (weakSelf.delegate) [weakSelf.delegate onSpritePlayerPaused];
+                } else {
+                    if (weakSelf.delegate) [weakSelf.delegate onSpritePlayerStopped];
+                    if (weakSelf.mtSpriteView) {
+                        for (MTSprite* sprite in weakSelf.mtSpriteView.sprites) {
+                            sprite.scale = 0;
+                        }
+                    } else if (weakSelf.glSpriteView) {
+                        for (GLSprite* sprite in weakSelf.glSpriteView.sprites) {
+                            sprite.scale = 0;
+                        }
+                    }
+                    [weakSelf refreshSpriteView];
+                }
+            });
+        }
+    }
+}
+
+-(NSString*)imagePathWithFolder:(NSString*)folder index:(NSInteger)index format:(TextureFormat)format {
+    NSString* imgName = [NSString stringWithFormat:@"%@-%ld", folder, index];
+    switch (format) {
+        case TextureFormatPNG:
+            return [self pathWithFileName:imgName type:@"png"];
+        case TextureFormatPVR:
+            return [self pathWithFileName:imgName type:@"pvr"];
     }
 }
 
@@ -208,13 +212,13 @@ typedef NS_ENUM(NSInteger, TextureFormat) {
         AVAudioSession* session = [AVAudioSession sharedInstance];
         NSError* err;
         [session setCategory:AVAudioSessionCategoryPlayback withOptions:AVAudioSessionCategoryOptionDefaultToSpeaker error:&err];
-        if (err) {
+        /*if (err) {
             NSLog(@"AVPlayer setCategory error: %@", err.localizedDescription);
-        }
+        }*/
         [session setActive:YES error:&err];
-        if (err) {
+        /*if (err) {
             NSLog(@"AVPlayer setSessionActive error: %@", err.localizedDescription);
-        }
+        }*/
         [player setRate:1.0f];
         if (@available(iOS 10.0, *)) {
             [player playImmediatelyAtRate:1.0];
@@ -290,15 +294,6 @@ typedef NS_ENUM(NSInteger, TextureFormat) {
         }
     }
     return NO;
-}
-
--(NSString*)typeStringWithTextureFormat:(TextureFormat)textureFormat {
-    switch (textureFormat) {
-        case TextureFormatPNG:
-            return @"png";
-        case TextureFormatPVR:
-            return @"pvr";
-    }
 }
 
 -(NSString*)pathWithFileName:(NSString*)name type:(NSString*)type {

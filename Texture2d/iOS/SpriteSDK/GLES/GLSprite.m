@@ -24,7 +24,7 @@ const GLfloat TEXTURE_COORDS[] = {
 };
 
 // Draw index order
-const int16_t INDICES[] = {
+const GLubyte INDICES[] = {
     0, 1, 2,
     0, 3, 2
 };
@@ -165,7 +165,7 @@ const GLfloat CAMERA_UP_Z = 0.0f;
     glEnableVertexAttribArray(_locTextureCoordinate);
     
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
-    glDrawElements(GL_TRIANGLE_STRIP, sizeof(INDICES)/sizeof(GLushort), GL_UNSIGNED_BYTE, (void*)NULL);
+    glDrawElements(GL_TRIANGLE_STRIP, sizeof(INDICES)/sizeof(GLubyte), GL_UNSIGNED_BYTE, (void*)NULL);
     
     glDisableVertexAttribArray(_locPosition);
     glDisableVertexAttribArray(_locTextureCoordinate);

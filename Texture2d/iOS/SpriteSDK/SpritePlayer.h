@@ -11,19 +11,26 @@
 #import "GLSpriteView.h"
 
 @protocol SpritePlayerDelegate<NSObject>
+
 @optional
--(void)onSproitePlayerStarted;
+-(void)onSpritePlayerStarted;
+
 @optional
--(void)onSproitePlayerPaused;
+-(void)onSpritePlayerPaused;
+
 @optional
--(void)onSproitePlayerResumed;
+-(void)onSpritePlayerResumed;
+
 @optional
--(void)onSproitePlayerStopped;
+-(void)onSpritePlayerStopped;
+
 @end
 
 @interface SpritePlayer : NSObject
 
 @property(nonatomic,weak) id<SpritePlayerDelegate> delegate;
+
+@property(nonatomic,assign) BOOL skipFrame;
 
 -(instancetype)initWithMTSpriteView:(MTSpriteView*)spriteView NS_AVAILABLE_IOS(9_0);
 

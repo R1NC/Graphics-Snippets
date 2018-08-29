@@ -39,6 +39,8 @@ public class SpritePlayer {
 
     private HashMap<AudioDuration, MediaPlayer> audioMap = new HashMap<>();
 
+    public boolean skipFrame;
+
     private class AudioDuration {
         int begin, end;
     }
@@ -96,11 +98,11 @@ public class SpritePlayer {
                         if (sprite.textureType == Sprite.TextureType.PNG) {
                             String assetImage = frameFolder + "/" + (frameIndex % frameCount) + EXTENSION_PNG;
                             sprite.png = BitmapFactory.decodeStream(assetManager.open(assetImage));
-                            Log.d(TAG, "Load PNG "+assetImage+" cost: "+(System.currentTimeMillis()-tx));
+                            Log.d(TAG, "Load PNG "+assetImage+" cost: "+(System.currentTimeMillis()-tx)+"ms");
                         } else if (sprite.textureType == Sprite.TextureType.ETC1) {
                             String assetImage = frameFolder + "/" + (frameIndex % frameCount) + EXTENSION_PKM;
                             sprite.etc1 = GLUtil.loadTextureETC1(assetManager.open(assetImage));
-                            Log.d(TAG, "Load PKM "+assetImage+" cost: "+(System.currentTimeMillis()-tx));
+                            Log.d(TAG, "Load PKM "+assetImage+" cost: "+(System.currentTimeMillis()-tx)+"ms");
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -117,26 +119,24 @@ public class SpritePlayer {
                     }
                     frameIndex++;
                 } else {
-                    frameIndex += (t1 - t0) / frameDuration;
+                    frameIndex += skipFrame ? (t1 - t0) / frameDuration : 1;
                 }
             }
 
             rendering = false;
             pauseAllAudios();
             if (!destroyed) {
-                if (callback != null) {
-                    spriteView.post(()->{
-                        if (paused) {
-                            callback.onPaused();
-                        } else {
-                            callback.onStopped();
-                            for (int i = 0; i < spriteView.sprites.size(); i++) {
-                                spriteView.sprites.get(i).scale = 0;
-                            }
-                            refreshSpriteView();
+                spriteView.post(()->{
+                    if (paused) {
+                        if (callback != null) callback.onPaused();
+                    } else {
+                        if (callback != null) callback.onStopped();
+                        for (int i = 0; i < spriteView.sprites.size(); i++) {
+                            spriteView.sprites.get(i).scale = 0;
                         }
-                    });
-                }
+                        refreshSpriteView();
+                    }
+                });
             }
         }).start();
     }

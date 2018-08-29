@@ -9,7 +9,7 @@
 #import "ViewController.h"
 #import <SpriteSDK/SpriteSDK.h>
 
-@interface ViewController ()
+@interface ViewController ()<SpritePlayerDelegate>
 @property(nonatomic,strong) SpritePlayer* spritePlayer;
 @end
 
@@ -18,14 +18,15 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    //MTSpriteView* mtSpriteView = [[MTSpriteView alloc]initWithFrame:self.view.frame];
-    //[self.view addSubview:mtSpriteView];
-    //_spritePlayer = [[SpritePlayer alloc]initWithMTSpriteView:mtSpriteView];
+    MTSpriteView* mtSpriteView = [[MTSpriteView alloc]initWithFrame:self.view.frame];
+    [self.view addSubview:mtSpriteView];
+    _spritePlayer = [[SpritePlayer alloc]initWithMTSpriteView:mtSpriteView];
     
-    GLSpriteView* glSpriteView = [[GLSpriteView alloc]initWithFrame:self.view.frame];
-    [self.view addSubview:glSpriteView];
-    _spritePlayer = [[SpritePlayer alloc]initWithGLSpriteView:glSpriteView];
+    //GLSpriteView* glSpriteView = [[GLSpriteView alloc]initWithFrame:self.view.frame];
+    //[self.view addSubview:glSpriteView];
+    //_spritePlayer = [[SpritePlayer alloc]initWithGLSpriteView:glSpriteView];
     
+    _spritePlayer.delegate = self;
     [_spritePlayer playResource:@"bomb"];
 }
 
@@ -39,5 +40,22 @@
     // Dispose of any resources that can be recreated.
 }
 
+#pragma mark SpritePlayerDelegate
+
+-(void)onSpritePlayerStarted {
+    NSLog(@"-> SpritePlayer started..");
+}
+
+-(void)onSpritePlayerPaused {
+    NSLog(@"-> SpritePlayer paused..");
+}
+
+-(void)onSpritePlayerResumed {
+    NSLog(@"-> SpritePlayer resumed..");
+}
+
+-(void)onSpritePlayerStopped {
+    NSLog(@"-> SpritePlayer stopped..");
+}
 
 @end
