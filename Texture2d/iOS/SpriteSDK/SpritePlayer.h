@@ -25,9 +25,9 @@
 
 @property(nonatomic,weak) id<SpritePlayerDelegate> delegate;
 
--(instancetype)initWithMTSpriteView:(MTSpriteView*)spriteView;
+-(instancetype)initWithMTSpriteView:(MTSpriteView*)spriteView NS_AVAILABLE_IOS(9_0);
 
--(instancetype)initWithGLSpriteView:(GLSpriteView*)spriteView __attribute__((deprecated));
+-(instancetype)initWithGLSpriteView:(GLSpriteView*)spriteView NS_DEPRECATED_IOS(5_0, 12_0, "OpenGL ES API is deprecated, use Metal API 'initWithMTSpriteView:' instead.");
 
 -(void)playResource:(NSString*)resource;
 
