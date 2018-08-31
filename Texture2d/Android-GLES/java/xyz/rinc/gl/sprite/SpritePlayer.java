@@ -16,7 +16,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class SpritePlayer {
 
@@ -37,7 +37,7 @@ public class SpritePlayer {
 
     private Callback callback;
 
-    private HashMap<AudioDuration, MediaPlayer> audioMap = new HashMap<>();
+    private ConcurrentHashMap<AudioDuration, MediaPlayer> audioMap;
 
     public boolean skipFrame;
 
@@ -58,6 +58,7 @@ public class SpritePlayer {
     public SpritePlayer(SpriteView spriteView) {
         assetManager = spriteView.getContext().getAssets();
         this.spriteView = spriteView;
+        audioMap = new ConcurrentHashMap<>();
     }
 
     public void setCallback(Callback callback) {
