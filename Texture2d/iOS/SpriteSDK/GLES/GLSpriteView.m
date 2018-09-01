@@ -45,7 +45,7 @@
     
     glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
     
-    for (GLSprite* sprite in super.sprites) {
+    for (GLSprite* sprite in self.sprites) {
         [sprite drawInRect:rect];
     }
     

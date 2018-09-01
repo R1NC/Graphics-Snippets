@@ -34,7 +34,7 @@
 -(void)drawRect:(CGRect)rect {
     [super drawRect:rect];
     
-    for (MTSprite* sprite in super.sprites) {
+    for (MTSprite* sprite in self.sprites) {
         // In order to draw into the Metal layer, we first need to get a ‘drawable’ from the layer.
         // The drawable object manages a set of textures that are appropriate for rendering into.
         [sprite renderDrawable:[_metalLayer nextDrawable] inRect:rect];

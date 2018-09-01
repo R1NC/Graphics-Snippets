@@ -10,6 +10,7 @@
 #import <Simd/Simd.h>
 #import <Metal/Metal.h>
 #import "MTUtil.h"
+#import "MatrixUtil.h"
 
 typedef struct {
     packed_float4 position;
@@ -93,12 +94,11 @@ const uint16_t INDICES_DATA[] = {
 }
 
 -(void)updateModelMatrixWithRect:(CGRect)rect {
-    GLKMatrix4 translateMatrix = GLKMatrix4MakeTranslation(self.transX, self.transY, 0.0);
-    GLKMatrix4 rotateMatrix = GLKMatrix4MakeRotation(GLKMathDegreesToRadians(self.angle) , 0.0, 0.0, -1.0);
-    GLKMatrix4 scaleMatrix = GLKMatrix4MakeScale(self.scale, self.scale, 1.0);
-    GLKMatrix4 modelMatrix = GLKMatrix4Multiply(translateMatrix, rotateMatrix);
-    modelMatrix = GLKMatrix4Multiply(modelMatrix, scaleMatrix);
-    _uniforms.modelMatrix = [MTUtil matrixf44WithGLKMatrix4:modelMatrix];
+     matrix_float4x4 translateMatrix = [MatrixUtil makeTranslateX:self.transX y:self.transY z:0];
+     matrix_float4x4 rotateMatrix = [MatrixUtil makeRotateX:0.0f y:0.0f z:-1.0 degree:self.angle];
+     matrix_float4x4 scaleMatrix = [MatrixUtil makeScaleX:self.scale y:self.scale z:1.0f];
+     matrix_float4x4 modelMatrix = [MatrixUtil leftMultiplyMatrixA:translateMatrix matrixB:rotateMatrix];
+     _uniforms.modelMatrix = [MatrixUtil leftMultiplyMatrixA:modelMatrix matrixB:scaleMatrix];
 }
 
 -(void)syncUniforms {

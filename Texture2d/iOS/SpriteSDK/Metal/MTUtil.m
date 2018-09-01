@@ -61,16 +61,6 @@
     return renderPassDescriptor;
 }
 
-+(matrix_float4x4)matrixf44WithGLKMatrix4:(GLKMatrix4)matrix {
-    matrix_float4x4 m = {
-        .columns[0] = {matrix.m00, matrix.m01, matrix.m02, matrix.m03},
-        .columns[1] = {matrix.m10, matrix.m11, matrix.m12, matrix.m13},
-        .columns[2] = {matrix.m20, matrix.m21, matrix.m22, matrix.m23},
-        .columns[3] = {matrix.m30, matrix.m31, matrix.m32, matrix.m33}
-    };
-    return m;
-}
-
 +(id<MTLTexture>)loadTextureWithImagePath:(NSString*)imagePath device:(id<MTLDevice>)device {
     if (imagePath) {
         MTKTextureLoader* loader = [[MTKTextureLoader alloc]initWithDevice:device];

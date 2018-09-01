@@ -8,7 +8,7 @@
 
 #import "SpriteViewBase.h"
 
-__deprecated_msg("OpenGL ES API is deprecated, use Metal API 'MTSpriteView' instead.")
+__deprecated_msg("OpenGL ES API is deprecated in iOS 12, use Metal API 'MTSpriteView' instead.")
 @interface GLSpriteView : SpriteViewBase
 
 @end

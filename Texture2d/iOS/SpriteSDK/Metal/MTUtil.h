@@ -10,7 +10,6 @@
 #import <Simd/Simd.h>
 #import <Metal/Metal.h>
 #import <MetalKit/MetalKit.h>
-#import <GLKit/GLKit.h>
 
 @interface MTUtil : NSObject
 
@@ -21,8 +20,6 @@
 +(MTLRenderPassDescriptor*)renderPassDescriptorWithTexture:(id<MTLTexture>)texture;
 
 +(id<MTLSamplerState>)samplerWithDevice:(id<MTLDevice>)device;
-
-+(matrix_float4x4)matrixf44WithGLKMatrix4:(GLKMatrix4)matrix;
 
 +(id<MTLTexture>)loadTextureWithImagePath:(NSString*)imagePath device:(id<MTLDevice>)device;
 

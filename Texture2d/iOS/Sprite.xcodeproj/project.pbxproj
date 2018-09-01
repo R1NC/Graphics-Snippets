@@ -10,6 +10,8 @@
 		801A419F21359E610077EC89 /* default.metallib in Resources */ = {isa = PBXBuildFile; fileRef = 801A419E21359E610077EC89 /* default.metallib */; };
 		801A41A221359F0F0077EC89 /* fragment-png.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 801A41A021359F0E0077EC89 /* fragment-png.glsl */; };
 		801A41A321359F0F0077EC89 /* vertex-png.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 801A41A121359F0F0077EC89 /* vertex-png.glsl */; };
+		80307EE5213A334B00D5C2C1 /* MatrixUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 80307EE3213A334B00D5C2C1 /* MatrixUtil.h */; };
+		80307EE6213A334B00D5C2C1 /* MatrixUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 80307EE4213A334B00D5C2C1 /* MatrixUtil.m */; };
 		80EDC8C421354E5A0086A70C /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 80EDC8C321354E5A0086A70C /* AppDelegate.m */; };
 		80EDC8C721354E5A0086A70C /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 80EDC8C621354E5A0086A70C /* ViewController.m */; };
 		80EDC8CA21354E5A0086A70C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 80EDC8C821354E5A0086A70C /* Main.storyboard */; };
@@ -74,6 +76,8 @@
 		801A419E21359E610077EC89 /* default.metallib */ = {isa = PBXFileReference; lastKnownFileType = "archive.metal-library"; name = default.metallib; path = SpriteSDK.framework/default.metallib; sourceTree = "<group>"; };
 		801A41A021359F0E0077EC89 /* fragment-png.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; name = "fragment-png.glsl"; path = "SpriteSDK.framework/fragment-png.glsl"; sourceTree = "<group>"; };
 		801A41A121359F0F0077EC89 /* vertex-png.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; name = "vertex-png.glsl"; path = "SpriteSDK.framework/vertex-png.glsl"; sourceTree = "<group>"; };
+		80307EE3213A334B00D5C2C1 /* MatrixUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MatrixUtil.h; path = SpriteSDK/Metal/MatrixUtil.h; sourceTree = "<group>"; };
+		80307EE4213A334B00D5C2C1 /* MatrixUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = MatrixUtil.m; path = SpriteSDK/Metal/MatrixUtil.m; sourceTree = "<group>"; };
 		80EDC8BF21354E5A0086A70C /* Sprite.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sprite.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		80EDC8C221354E5A0086A70C /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		80EDC8C321354E5A0086A70C /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -220,6 +224,8 @@
 				80EDC9832135729A0086A70C /* MTSpriteView.m */,
 				80EDC9822135729A0086A70C /* MTUtil.h */,
 				80EDC981213572990086A70C /* MTUtil.m */,
+				80307EE3213A334B00D5C2C1 /* MatrixUtil.h */,
+				80307EE4213A334B00D5C2C1 /* MatrixUtil.m */,
 			);
 			name = Metal;
 			sourceTree = "<group>";
@@ -250,6 +256,7 @@
 				80EDC97E213572840086A70C /* SpriteSDK.h in Headers */,
 				80EDC97D213572840086A70C /* SpritePlayer.h in Headers */,
 				80EDC9872135729A0086A70C /* MTSpriteView.h in Headers */,
+				80307EE5213A334B00D5C2C1 /* MatrixUtil.h in Headers */,
 				80EDC994213572A90086A70C /* GLUtil.h in Headers */,
 				80EDC98B2135729A0086A70C /* MTSprite.h in Headers */,
 				80EDC996213572A90086A70C /* GLSprite.h in Headers */,
@@ -383,6 +390,7 @@
 				80EDC97A213572840086A70C /* SpritePlayer.m in Sources */,
 				80EDC97F213572840086A70C /* SpriteBase.m in Sources */,
 				80EDC995213572A90086A70C /* GLUtil.m in Sources */,
+				80307EE6213A334B00D5C2C1 /* MatrixUtil.m in Sources */,
 				80EDC9882135729A0086A70C /* MTUtil.m in Sources */,
 				80EDC98C2135729A0086A70C /* Sprite.metal in Sources */,
 				80EDC997213572A90086A70C /* GLSprite.m in Sources */,
