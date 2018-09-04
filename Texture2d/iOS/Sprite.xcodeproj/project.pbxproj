@@ -11,10 +11,10 @@
 		80307EE5213A334B00D5C2C1 /* MatrixUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 80307EE3213A334B00D5C2C1 /* MatrixUtil.h */; };
 		80307EE6213A334B00D5C2C1 /* MatrixUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 80307EE4213A334B00D5C2C1 /* MatrixUtil.m */; };
 		80307FCB213E88C200D5C2C1 /* Sprite.metal in Sources */ = {isa = PBXBuildFile; fileRef = 80307FCA213E88C200D5C2C1 /* Sprite.metal */; };
-		80307FCE213E88D300D5C2C1 /* SpriteVertex.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 80307FCC213E88D300D5C2C1 /* SpriteVertex.glsl */; };
-		80307FCF213E88D300D5C2C1 /* SpriteFragment.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 80307FCD213E88D300D5C2C1 /* SpriteFragment.glsl */; };
 		80307FD2213E89D000D5C2C1 /* SpriteVertex.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 80307FD0213E89D000D5C2C1 /* SpriteVertex.glsl */; };
 		80307FD3213E89D000D5C2C1 /* SpriteFragment.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 80307FD1213E89D000D5C2C1 /* SpriteFragment.glsl */; };
+		80307FD6213E9C1200D5C2C1 /* SpriteFragment.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 80307FD4213E9C1100D5C2C1 /* SpriteFragment.glsl */; };
+		80307FD7213E9C1200D5C2C1 /* SpriteVertex.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 80307FD5213E9C1200D5C2C1 /* SpriteVertex.glsl */; };
 		80EDC8C421354E5A0086A70C /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 80EDC8C321354E5A0086A70C /* AppDelegate.m */; };
 		80EDC8C721354E5A0086A70C /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 80EDC8C621354E5A0086A70C /* ViewController.m */; };
 		80EDC8CA21354E5A0086A70C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 80EDC8C821354E5A0086A70C /* Main.storyboard */; };
@@ -77,10 +77,10 @@
 		80307EE3213A334B00D5C2C1 /* MatrixUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MatrixUtil.h; path = SpriteSDK/Metal/MatrixUtil.h; sourceTree = "<group>"; };
 		80307EE4213A334B00D5C2C1 /* MatrixUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = MatrixUtil.m; path = SpriteSDK/Metal/MatrixUtil.m; sourceTree = "<group>"; };
 		80307FCA213E88C200D5C2C1 /* Sprite.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; name = Sprite.metal; path = ../Shader/Metal/Sprite.metal; sourceTree = "<group>"; };
-		80307FCC213E88D300D5C2C1 /* SpriteVertex.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = SpriteVertex.glsl; path = ../Shader/GLSL/SpriteVertex.glsl; sourceTree = "<group>"; };
-		80307FCD213E88D300D5C2C1 /* SpriteFragment.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = SpriteFragment.glsl; path = ../Shader/GLSL/SpriteFragment.glsl; sourceTree = "<group>"; };
 		80307FD0213E89D000D5C2C1 /* SpriteVertex.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; name = SpriteVertex.glsl; path = SpriteSDK.framework/SpriteVertex.glsl; sourceTree = "<group>"; };
 		80307FD1213E89D000D5C2C1 /* SpriteFragment.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; name = SpriteFragment.glsl; path = SpriteSDK.framework/SpriteFragment.glsl; sourceTree = "<group>"; };
+		80307FD4213E9C1100D5C2C1 /* SpriteFragment.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = SpriteFragment.glsl; path = ../Shader/GLES/SpriteFragment.glsl; sourceTree = "<group>"; };
+		80307FD5213E9C1200D5C2C1 /* SpriteVertex.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = SpriteVertex.glsl; path = ../Shader/GLES/SpriteVertex.glsl; sourceTree = "<group>"; };
 		80EDC8BF21354E5A0086A70C /* Sprite.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sprite.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		80EDC8C221354E5A0086A70C /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		80EDC8C321354E5A0086A70C /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -233,8 +233,8 @@
 		80EDC973213572720086A70C /* GLES */ = {
 			isa = PBXGroup;
 			children = (
-				80307FCD213E88D300D5C2C1 /* SpriteFragment.glsl */,
-				80307FCC213E88D300D5C2C1 /* SpriteVertex.glsl */,
+				80307FD4213E9C1100D5C2C1 /* SpriteFragment.glsl */,
+				80307FD5213E9C1200D5C2C1 /* SpriteVertex.glsl */,
 				80EDC990213572A90086A70C /* GLSprite.h */,
 				80EDC991213572A90086A70C /* GLSprite.m */,
 				80EDC992213572A90086A70C /* GLSpriteView.h */,
@@ -360,9 +360,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				80307FCE213E88D300D5C2C1 /* SpriteVertex.glsl in Resources */,
+				80307FD6213E9C1200D5C2C1 /* SpriteFragment.glsl in Resources */,
 				80EDC97B213572840086A70C /* Info.plist in Resources */,
-				80307FCF213E88D300D5C2C1 /* SpriteFragment.glsl in Resources */,
+				80307FD7213E9C1200D5C2C1 /* SpriteVertex.glsl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
