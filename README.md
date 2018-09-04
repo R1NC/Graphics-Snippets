@@ -4,6 +4,8 @@ Code snippets of graphics (OpenGL ES /  Metal).
 
 ### Texture2D
 
+Supported texture formats: png, ECT1(Android), PVRTC(iOS);
+
 **Shader**:
 
 * [x] [OpenGL ES](https://github.com/RincLiu/Graphics-Snippets/tree/master/Texture2d/Shader/GLES);
