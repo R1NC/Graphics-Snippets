@@ -53,6 +53,7 @@ public class Sprite {
 
     private int program;
 
+    private int locETC;
     private int locPosition;
     private int locTextureCoordinate;
     private int locProjectionMatrix, locCameraMatrix, locModelMatrix;
@@ -102,7 +103,7 @@ public class Sprite {
 
         updateModelMatrix();
 
-        updateMatrices2Shader();
+        updateUniform2Shader();
 
         drawElements();
     }
@@ -130,13 +131,10 @@ public class Sprite {
     }
 
     void loadShader() {
-        if (textureType == TextureType.PNG) {
-            program = GLUtil.loadShaderAsset(context, "vertex-png.glsl", "fragment-png.glsl");
-        } else if (textureType == TextureType.ETC1) {
-            program = GLUtil.loadShaderAsset(context, "vertex-etc1.glsl", "fragment-etc1.glsl");
-        }
+        program = GLUtil.loadShaderAsset(context, "SpriteVertex.glsl", "SpriteFragment.glsl");
         if (program > 0) {
             GLES20.glUseProgram(program);
+            locETC = GLES20.glGetAttribLocation(program, "u_ETC");
             locPosition = GLES20.glGetAttribLocation(program, "a_Position");
             locTextureCoordinate = GLES20.glGetAttribLocation(program, "a_TextureCoordinate");
             locProjectionMatrix = GLES20.glGetUniformLocation(program, "u_projectionMatrix");
@@ -184,10 +182,11 @@ public class Sprite {
         }
     }
 
-    private void updateMatrices2Shader() {
+    private void updateUniform2Shader() {
         GLES20.glUniformMatrix4fv(locProjectionMatrix, 1, false, projectionMatrix, 0);
         GLES20.glUniformMatrix4fv(locCameraMatrix, 1, false, cameraMatrix, 0);
         GLES20.glUniformMatrix4fv(locModelMatrix, 1, false, modelMatrix, 0);
+        GLES20.glUniform1f(locETC, textureType == TextureType.ETC1 ? 1.0f : 0.0f);
     }
 
     private void drawElements() {

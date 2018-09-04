@@ -8,10 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		801A419F21359E610077EC89 /* default.metallib in Resources */ = {isa = PBXBuildFile; fileRef = 801A419E21359E610077EC89 /* default.metallib */; };
-		801A41A221359F0F0077EC89 /* fragment-png.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 801A41A021359F0E0077EC89 /* fragment-png.glsl */; };
-		801A41A321359F0F0077EC89 /* vertex-png.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 801A41A121359F0F0077EC89 /* vertex-png.glsl */; };
 		80307EE5213A334B00D5C2C1 /* MatrixUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 80307EE3213A334B00D5C2C1 /* MatrixUtil.h */; };
 		80307EE6213A334B00D5C2C1 /* MatrixUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 80307EE4213A334B00D5C2C1 /* MatrixUtil.m */; };
+		80307FCB213E88C200D5C2C1 /* Sprite.metal in Sources */ = {isa = PBXBuildFile; fileRef = 80307FCA213E88C200D5C2C1 /* Sprite.metal */; };
+		80307FCE213E88D300D5C2C1 /* SpriteVertex.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 80307FCC213E88D300D5C2C1 /* SpriteVertex.glsl */; };
+		80307FCF213E88D300D5C2C1 /* SpriteFragment.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 80307FCD213E88D300D5C2C1 /* SpriteFragment.glsl */; };
+		80307FD2213E89D000D5C2C1 /* SpriteVertex.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 80307FD0213E89D000D5C2C1 /* SpriteVertex.glsl */; };
+		80307FD3213E89D000D5C2C1 /* SpriteFragment.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 80307FD1213E89D000D5C2C1 /* SpriteFragment.glsl */; };
 		80EDC8C421354E5A0086A70C /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 80EDC8C321354E5A0086A70C /* AppDelegate.m */; };
 		80EDC8C721354E5A0086A70C /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 80EDC8C621354E5A0086A70C /* ViewController.m */; };
 		80EDC8CA21354E5A0086A70C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 80EDC8C821354E5A0086A70C /* Main.storyboard */; };
@@ -34,7 +37,6 @@
 		80EDC9892135729A0086A70C /* MTUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 80EDC9822135729A0086A70C /* MTUtil.h */; };
 		80EDC98A2135729A0086A70C /* MTSpriteView.m in Sources */ = {isa = PBXBuildFile; fileRef = 80EDC9832135729A0086A70C /* MTSpriteView.m */; };
 		80EDC98B2135729A0086A70C /* MTSprite.h in Headers */ = {isa = PBXBuildFile; fileRef = 80EDC9842135729A0086A70C /* MTSprite.h */; };
-		80EDC98C2135729A0086A70C /* Sprite.metal in Sources */ = {isa = PBXBuildFile; fileRef = 80EDC9852135729A0086A70C /* Sprite.metal */; };
 		80EDC98D2135729A0086A70C /* MTSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = 80EDC9862135729A0086A70C /* MTSprite.m */; };
 		80EDC994213572A90086A70C /* GLUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 80EDC98E213572A90086A70C /* GLUtil.h */; };
 		80EDC995213572A90086A70C /* GLUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 80EDC98F213572A90086A70C /* GLUtil.m */; };
@@ -42,8 +44,6 @@
 		80EDC997213572A90086A70C /* GLSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = 80EDC991213572A90086A70C /* GLSprite.m */; };
 		80EDC998213572A90086A70C /* GLSpriteView.h in Headers */ = {isa = PBXBuildFile; fileRef = 80EDC992213572A90086A70C /* GLSpriteView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		80EDC999213572A90086A70C /* GLSpriteView.m in Sources */ = {isa = PBXBuildFile; fileRef = 80EDC993213572A90086A70C /* GLSpriteView.m */; };
-		80EDC99C213572C20086A70C /* fragment-png.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 80EDC99A213572C20086A70C /* fragment-png.glsl */; };
-		80EDC99D213572C20086A70C /* vertex-png.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 80EDC99B213572C20086A70C /* vertex-png.glsl */; };
 		80EDCC082136640A0086A70C /* SpriteViewBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 80EDCC062136640A0086A70C /* SpriteViewBase.h */; };
 		80EDCC092136640A0086A70C /* SpriteViewBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 80EDCC072136640A0086A70C /* SpriteViewBase.m */; };
 		80EDCC0B2136741C0086A70C /* SpriteSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 80EDC957213571490086A70C /* SpriteSDK.framework */; };
@@ -74,10 +74,13 @@
 
 /* Begin PBXFileReference section */
 		801A419E21359E610077EC89 /* default.metallib */ = {isa = PBXFileReference; lastKnownFileType = "archive.metal-library"; name = default.metallib; path = SpriteSDK.framework/default.metallib; sourceTree = "<group>"; };
-		801A41A021359F0E0077EC89 /* fragment-png.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; name = "fragment-png.glsl"; path = "SpriteSDK.framework/fragment-png.glsl"; sourceTree = "<group>"; };
-		801A41A121359F0F0077EC89 /* vertex-png.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; name = "vertex-png.glsl"; path = "SpriteSDK.framework/vertex-png.glsl"; sourceTree = "<group>"; };
 		80307EE3213A334B00D5C2C1 /* MatrixUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MatrixUtil.h; path = SpriteSDK/Metal/MatrixUtil.h; sourceTree = "<group>"; };
 		80307EE4213A334B00D5C2C1 /* MatrixUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = MatrixUtil.m; path = SpriteSDK/Metal/MatrixUtil.m; sourceTree = "<group>"; };
+		80307FCA213E88C200D5C2C1 /* Sprite.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; name = Sprite.metal; path = ../Shader/Metal/Sprite.metal; sourceTree = "<group>"; };
+		80307FCC213E88D300D5C2C1 /* SpriteVertex.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = SpriteVertex.glsl; path = ../Shader/GLSL/SpriteVertex.glsl; sourceTree = "<group>"; };
+		80307FCD213E88D300D5C2C1 /* SpriteFragment.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = SpriteFragment.glsl; path = ../Shader/GLSL/SpriteFragment.glsl; sourceTree = "<group>"; };
+		80307FD0213E89D000D5C2C1 /* SpriteVertex.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; name = SpriteVertex.glsl; path = SpriteSDK.framework/SpriteVertex.glsl; sourceTree = "<group>"; };
+		80307FD1213E89D000D5C2C1 /* SpriteFragment.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; name = SpriteFragment.glsl; path = SpriteSDK.framework/SpriteFragment.glsl; sourceTree = "<group>"; };
 		80EDC8BF21354E5A0086A70C /* Sprite.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sprite.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		80EDC8C221354E5A0086A70C /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		80EDC8C321354E5A0086A70C /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -105,7 +108,6 @@
 		80EDC9822135729A0086A70C /* MTUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MTUtil.h; path = SpriteSDK/Metal/MTUtil.h; sourceTree = "<group>"; };
 		80EDC9832135729A0086A70C /* MTSpriteView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MTSpriteView.m; path = SpriteSDK/Metal/MTSpriteView.m; sourceTree = "<group>"; };
 		80EDC9842135729A0086A70C /* MTSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MTSprite.h; path = SpriteSDK/Metal/MTSprite.h; sourceTree = "<group>"; };
-		80EDC9852135729A0086A70C /* Sprite.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; name = Sprite.metal; path = SpriteSDK/Metal/Sprite.metal; sourceTree = "<group>"; };
 		80EDC9862135729A0086A70C /* MTSprite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MTSprite.m; path = SpriteSDK/Metal/MTSprite.m; sourceTree = "<group>"; };
 		80EDC98E213572A90086A70C /* GLUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLUtil.h; path = SpriteSDK/GLES/GLUtil.h; sourceTree = "<group>"; };
 		80EDC98F213572A90086A70C /* GLUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GLUtil.m; path = SpriteSDK/GLES/GLUtil.m; sourceTree = "<group>"; };
@@ -113,8 +115,6 @@
 		80EDC991213572A90086A70C /* GLSprite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GLSprite.m; path = SpriteSDK/GLES/GLSprite.m; sourceTree = "<group>"; };
 		80EDC992213572A90086A70C /* GLSpriteView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLSpriteView.h; path = SpriteSDK/GLES/GLSpriteView.h; sourceTree = "<group>"; };
 		80EDC993213572A90086A70C /* GLSpriteView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GLSpriteView.m; path = SpriteSDK/GLES/GLSpriteView.m; sourceTree = "<group>"; };
-		80EDC99A213572C20086A70C /* fragment-png.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "fragment-png.glsl"; path = "../Shader-GLES/fragment-png.glsl"; sourceTree = "<group>"; };
-		80EDC99B213572C20086A70C /* vertex-png.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "vertex-png.glsl"; path = "../Shader-GLES/vertex-png.glsl"; sourceTree = "<group>"; };
 		80EDCA25213576BE0086A70C /* default.metallib */ = {isa = PBXFileReference; lastKnownFileType = "archive.metal-library"; name = default.metallib; path = SpriteSDK.framework/default.metallib; sourceTree = "<group>"; };
 		80EDCA27213576D90086A70C /* SpriteSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SpriteSDK.framework; sourceTree = "<group>"; };
 		80EDCC062136640A0086A70C /* SpriteViewBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SpriteViewBase.h; path = SpriteSDK/SpriteViewBase.h; sourceTree = "<group>"; };
@@ -148,8 +148,8 @@
 		80EDC8B621354E5A0086A70C = {
 			isa = PBXGroup;
 			children = (
-				801A41A021359F0E0077EC89 /* fragment-png.glsl */,
-				801A41A121359F0F0077EC89 /* vertex-png.glsl */,
+				80307FD1213E89D000D5C2C1 /* SpriteFragment.glsl */,
+				80307FD0213E89D000D5C2C1 /* SpriteVertex.glsl */,
 				801A419E21359E610077EC89 /* default.metallib */,
 				80EDC971213572570086A70C /* SpriteSDK */,
 				80EDC8C121354E5A0086A70C /* Sprite */,
@@ -217,7 +217,7 @@
 		80EDC972213572690086A70C /* Metal */ = {
 			isa = PBXGroup;
 			children = (
-				80EDC9852135729A0086A70C /* Sprite.metal */,
+				80307FCA213E88C200D5C2C1 /* Sprite.metal */,
 				80EDC9842135729A0086A70C /* MTSprite.h */,
 				80EDC9862135729A0086A70C /* MTSprite.m */,
 				80EDC980213572990086A70C /* MTSpriteView.h */,
@@ -233,8 +233,8 @@
 		80EDC973213572720086A70C /* GLES */ = {
 			isa = PBXGroup;
 			children = (
-				80EDC99A213572C20086A70C /* fragment-png.glsl */,
-				80EDC99B213572C20086A70C /* vertex-png.glsl */,
+				80307FCD213E88D300D5C2C1 /* SpriteFragment.glsl */,
+				80307FCC213E88D300D5C2C1 /* SpriteVertex.glsl */,
 				80EDC990213572A90086A70C /* GLSprite.h */,
 				80EDC991213572A90086A70C /* GLSprite.m */,
 				80EDC992213572A90086A70C /* GLSpriteView.h */,
@@ -347,8 +347,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				801A41A221359F0F0077EC89 /* fragment-png.glsl in Resources */,
-				801A41A321359F0F0077EC89 /* vertex-png.glsl in Resources */,
+				80307FD2213E89D000D5C2C1 /* SpriteVertex.glsl in Resources */,
+				80307FD3213E89D000D5C2C1 /* SpriteFragment.glsl in Resources */,
 				801A419F21359E610077EC89 /* default.metallib in Resources */,
 				80EDC8CF21354E5B0086A70C /* LaunchScreen.storyboard in Resources */,
 				80EDC8CC21354E5B0086A70C /* Assets.xcassets in Resources */,
@@ -360,9 +360,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				80EDC99D213572C20086A70C /* vertex-png.glsl in Resources */,
+				80307FCE213E88D300D5C2C1 /* SpriteVertex.glsl in Resources */,
 				80EDC97B213572840086A70C /* Info.plist in Resources */,
-				80EDC99C213572C20086A70C /* fragment-png.glsl in Resources */,
+				80307FCF213E88D300D5C2C1 /* SpriteFragment.glsl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -389,10 +389,10 @@
 				80EDC999213572A90086A70C /* GLSpriteView.m in Sources */,
 				80EDC97A213572840086A70C /* SpritePlayer.m in Sources */,
 				80EDC97F213572840086A70C /* SpriteBase.m in Sources */,
+				80307FCB213E88C200D5C2C1 /* Sprite.metal in Sources */,
 				80EDC995213572A90086A70C /* GLUtil.m in Sources */,
 				80307EE6213A334B00D5C2C1 /* MatrixUtil.m in Sources */,
 				80EDC9882135729A0086A70C /* MTUtil.m in Sources */,
-				80EDC98C2135729A0086A70C /* Sprite.metal in Sources */,
 				80EDC997213572A90086A70C /* GLSprite.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

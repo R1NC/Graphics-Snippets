@@ -47,7 +47,7 @@ const GLfloat CAMERA_UP_Z = 0.0f;
 @interface GLSprite()
 @property(nonatomic,assign) GLuint program;
 @property(nonatomic,assign) GLuint vertexBuffer, textureBuffer, indexBuffer;
-@property(nonatomic,assign) GLuint locPosition, locTextureCoordinate, locTexture, locProjectionMatrix, locCameraMatrix, locModelMatrix;
+@property(nonatomic,assign) GLuint locETC, locPosition, locTextureCoordinate, locTexture, locProjectionMatrix, locCameraMatrix, locModelMatrix;
 @property(nonatomic,assign) GLKMatrix4 projectionMatrix, cameraMatrix, modelMatrix;
 @end
 
@@ -67,7 +67,7 @@ const GLfloat CAMERA_UP_Z = 0.0f;
         [GLUtil bindTexture:_texture channel:GL_TEXTURE0 location:_locTexture];
         [self updateProjectionMatrixWithRect:rect];
         [self updateModelMatrixWithRect:rect];
-        [self updateMatrices2Shader];
+        [self updateUniform2Shader];
         [self drawElements];
         // GLKTextureInfo doesn't own any memory beyond a few GLuint's.
         // When you re-assign self.textureInfo, the GLKTextureInfo gets deallocated but the memory used for the pixels is not.
@@ -94,7 +94,7 @@ const GLfloat CAMERA_UP_Z = 0.0f;
 
 
 -(void)loadShader {
-    _program = [GLUtil loadVertexGLSL:@"vertex-png" fragmentGLSL:@"fragment-png"];
+    _program = [GLUtil loadVertexGLSL:@"SpriteVertex" fragmentGLSL:@"SpriteFragment"];
     if (_program > 0) {
         glUseProgram(_program);
         _locPosition = glGetAttribLocation(_program, "a_Position");
@@ -103,6 +103,7 @@ const GLfloat CAMERA_UP_Z = 0.0f;
         _locProjectionMatrix = glGetUniformLocation(_program, "u_projectionMatrix");
         _locCameraMatrix = glGetUniformLocation(_program, "u_cameraMatrix");
         _locModelMatrix = glGetUniformLocation(_program, "u_modelMatrix");
+        _locETC = glGetAttribLocation(_program, "u_ETC");
     }
 }
 
@@ -149,10 +150,11 @@ const GLfloat CAMERA_UP_Z = 0.0f;
     _modelMatrix = GLKMatrix4Multiply(_modelMatrix, scaleMatrix);
 }
 
--(void)updateMatrices2Shader {
+-(void)updateUniform2Shader {
     glUniformMatrix4fv(_locProjectionMatrix, 1, GL_FALSE, _projectionMatrix.m);
     glUniformMatrix4fv(_locCameraMatrix, 1, GL_FALSE, _cameraMatrix.m);
     glUniformMatrix4fv(_locModelMatrix, 1, GL_FALSE, _modelMatrix.m);
+    glUniform1f(_locETC, 0.0f);
 }
 
 -(void)drawElements {

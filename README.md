@@ -15,3 +15,9 @@ Code snippets of graphics (OpenGL ES /  Metal).
 * [x] [OpenGL ES](https://github.com/RincLiu/Graphics-Snippets/tree/master/Texture2d/iOS/SpriteSDK/GLES);
 
 * [x] [ Metal](https://github.com/RincLiu/Graphics-Snippets/tree/master/Texture2d/iOS/SpriteSDK/Metal);
+
+**Shader**:
+
+* [x] [OpenGL ES](https://github.com/RincLiu/Graphics-Snippets/tree/master/Texture2d/Shader/GLES);
+
+* [x] [ Metal](https://github.com/RincLiu/Graphics-Snippets/tree/master/Texture2d/Shader/Metal);
