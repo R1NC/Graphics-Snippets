@@ -39,6 +39,8 @@
 -(void)drawRect:(CGRect)rect {
     [super drawRect:rect];
     
+    [EAGLContext setCurrentContext:_glContext];
+    
     glViewport(0, 0, _bufferWidth, _bufferHeight);
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
