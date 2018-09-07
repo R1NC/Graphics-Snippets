@@ -40,7 +40,7 @@ vertex VertexOut vertex_func(constant VertexIn* vertices [[buffer(0)]],
 
 // Fragment shader function
 fragment float4 fragment_func(VertexOut in [[stage_in]],
-                              texture2d<float, access::sample> texture [[texture(0)]],
+                              texture2d<float/*, access::sample*/> texture [[texture(0)]],
                               sampler texSampler [[sampler(0)]]) {
     return texture.sample(texSampler, in.texCoords);
 }
