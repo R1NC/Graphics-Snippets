@@ -42,6 +42,7 @@ typedef NS_ENUM(NSInteger, TextureFormat) {
 @property(nonatomic,assign) NSTimeInterval frameDuration;
 @property(nonatomic,strong) NSMutableDictionary* audioMap;
 @property(nonatomic,assign) TextureFormat textureFormat;
+@property(nonatomic,strong) dispatch_queue_t queue;
 @end
 
 @implementation SpritePlayer
@@ -49,7 +50,7 @@ typedef NS_ENUM(NSInteger, TextureFormat) {
 -(instancetype)initWithMTSpriteView:(MTSpriteView*)mtSpriteView {
     if (self = [super init]) {
         _spriteView = mtSpriteView;
-        [self initialize];
+        [self _init_];
     }
     return self;
 }
@@ -57,14 +58,15 @@ typedef NS_ENUM(NSInteger, TextureFormat) {
 -(instancetype)initWithGLSpriteView:(GLSpriteView*)glSpriteView {
     if (self = [super init]) {
         _spriteView = glSpriteView;
-        [self initialize];
+        [self _init_];
     }
     return self;
 }
 
--(void)initialize {
+-(void)_init_ {
     _frameScale = 1.f;
     _audioMap = [NSMutableDictionary new];
+    _queue = dispatch_queue_create("SpritePlayer", dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_DEFAULT, 0));
 }
 
 -(void)playResource:(NSString*)resource {
@@ -74,7 +76,7 @@ typedef NS_ENUM(NSInteger, TextureFormat) {
     [self releaseAllAudios];
     [self releaseSprites:true];
     __weak typeof(self) weakSelf = self;
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(_queue, ^{
         if ([self parseConfig]) {
             weakSelf.paused = NO;
             [self startRender];
@@ -107,7 +109,7 @@ typedef NS_ENUM(NSInteger, TextureFormat) {
     } else {
         if (_delegate) [_delegate onSpritePlayerStarted];
     }
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(_queue, ^{
         [self renderIfNeeded];
     });
 }
