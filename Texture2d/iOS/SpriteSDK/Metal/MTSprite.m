@@ -88,9 +88,9 @@ const uint16_t INDICES_DATA[] = {
 }
 
 -(void)prepareBuffersWithDevice:(id<MTLDevice>)device {
-    _vertexBuffer = [device newBufferWithBytes:VERTICES_DATA length:sizeof(VERTICES_DATA) options:MTLResourceOptionCPUCacheModeDefault];
-    _indexBuffer = [device newBufferWithBytes:INDICES_DATA length:sizeof(INDICES_DATA) options:MTLResourceOptionCPUCacheModeDefault];
-    _uniformBuffer = [device newBufferWithLength:sizeof(Uniforms) options:MTLResourceOptionCPUCacheModeDefault];
+    _vertexBuffer = [device newBufferWithBytes:VERTICES_DATA length:sizeof(VERTICES_DATA) options:MTLResourceCPUCacheModeDefaultCache];
+    _indexBuffer = [device newBufferWithBytes:INDICES_DATA length:sizeof(INDICES_DATA) options:MTLResourceCPUCacheModeDefaultCache];
+    _uniformBuffer = [device newBufferWithLength:sizeof(Uniforms) options:MTLResourceCPUCacheModeDefaultCache];
 }
 
 -(void)updateModelMatrixWithRect:(CGRect)rect {
