@@ -20,19 +20,6 @@ typedef NS_ENUM(NSInteger, TextureFormat) {
     TextureFormatPVR
 };
 
-@interface AudioDuration : NSObject <NSCopying>
-@property(nonatomic,assign) NSInteger begin, end;
-@end
-
-@implementation AudioDuration
--(id)copyWithZone:(NSZone*)zone{
-    AudioDuration *ad = [[[self class] allocWithZone:zone] init];
-    ad.begin = _begin;
-    ad.end = _end;
-    return ad;
-}
-@end
-
 @interface SpritePlayer()
 @property(nonatomic,strong) SpriteViewBase* spriteView;
 @property(nonatomic,copy) NSString* frameFolder;
@@ -118,11 +105,13 @@ typedef NS_ENUM(NSInteger, TextureFormat) {
     if (!_paused && !_destroyed && (_frameIndex <= _frameCount - 1)) {
         NSTimeInterval t0 = CURRENT_TIME_MILLIS;
         
-        for (AudioDuration* ad in _audioMap.allKeys) {
+        for (NSString* ad in _audioMap.allKeys) {
             AVPlayer* player = _audioMap[ad];
-            if (_frameIndex >= ad.begin && _frameIndex <= ad.end) {
+            NSRange r = [ad rangeOfString:@"|"];
+            NSInteger begin = [ad substringToIndex:r.location].integerValue, end = [ad substringFromIndex:r.location+1].integerValue;
+            if (_frameIndex >= begin && _frameIndex <= end) {
                 [self resumeAudio:player];
-            } else if (_frameIndex > ad.end) {
+            } else if (_frameIndex > end) {
                 [self pauseAudio:player];
             }
         }
@@ -265,9 +254,7 @@ typedef NS_ENUM(NSInteger, TextureFormat) {
                 NSArray* audios = dict[@"audio"];
                 if (audios) {
                     for (NSDictionary* d in audios) {
-                        AudioDuration* ad = [AudioDuration new];
-                        ad.begin = [d[@"begin"] integerValue];
-                        ad.end = [d[@"end"] integerValue];
+                        NSString* ad = [NSString stringWithFormat:@"%ld|%ld", [d[@"begin"] integerValue], [d[@"end"] integerValue]];
                         NSString* af = [NSString stringWithFormat:@"%@-%@", _frameFolder, d[@"file"]];
                         _audioMap[ad] = [self createPlayerWithFile:af];
                     }
