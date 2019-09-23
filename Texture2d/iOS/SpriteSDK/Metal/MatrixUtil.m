@@ -66,9 +66,9 @@
     float cos = cosd(degree), sin = sind(degree);
     matrix_float4x4 m = {
         .columns = {
-            {cos + x * x * (1 - cos),       x * y * (1 - cos) + z * sin,    x * z * (1 - cos) - y * sin,    0.0f},
-            {x * y * (1 - cos) - z * sin,   cos + y * y * (1 - cos),        y * z * (1 - cos) + x * sin,    0.0f},
-            {x * z * (1 - cos) + y * sin,   y * z * (1 - cos) - x * sin,    cos + z * z * (1 - cos),        0.0f},
+            {cos + x * x * (1 - cos),       x * y * (1 - cos) - z * sin,    x * z * (1 - cos) + y * sin,    0.0f},
+            {x * y * (1 - cos) + z * sin,   cos + y * y * (1 - cos),        y * z * (1 - cos) - x * sin,    0.0f},
+            {x * z * (1 - cos) - y * sin,   y * z * (1 - cos) + x * sin,    cos + z * z * (1 - cos),        0.0f},
             {0.0f,                          0.0f,                           0.0f,                           1.0f}
         }
     };
