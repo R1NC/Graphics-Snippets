@@ -1,6 +1,6 @@
 # Graphics-Snippets
 
-Code snippets of graphics (OpenGL ES /  Metal).
+Code snippets of graphics (OpenGL ES &  Metal).
 
 ### Texture2D
 
