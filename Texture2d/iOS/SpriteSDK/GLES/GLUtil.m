@@ -13,7 +13,7 @@
 +(GLKTextureInfo*)loadTextureWithImagePath:(NSString*)imagePath {
     if (imagePath) {
         NSError *error;
-        NSLog(@"GL Error = %u", glGetError());//Required to fix a system bug. Or GLKTextureLoader may return nil.
+        NSLog(@"GL Error = %u", glGetError());//Required to fix a system bug. Or GLKTextureLoader may return nil. https://stackoverflow.com/questions/8611063/glktextureloader-fails-when-loading-a-certain-texture-the-first-time-but-succee/13948618#13948618
         GLKTextureInfo* textureInfo = [GLKTextureLoader textureWithContentsOfFile:imagePath options:nil error:&error];
         if (!error) {
             return textureInfo;
