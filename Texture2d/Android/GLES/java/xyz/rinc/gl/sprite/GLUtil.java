@@ -85,10 +85,14 @@ public class GLUtil {
     }
 
     // [GL_TEXTURE0,GL_TEXTURE31]
-    public static void setBitmap2Texture2d(int texture2dIndex, Bitmap bitmap) {
+    public static void setBitmap2Texture2d(int texture2dIndex, Bitmap bitmap, boolean reuse) {
         if (bitmap == null || bitmap.isRecycled() || texture2dIndex < 0 || texture2dIndex > 31) return;
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0 + texture2dIndex);
-        GLUtils.texImage2D(GL_TEXTURE_2D, 0, bitmap, 0);
+        if (reuse) {
+            GLUtils.texImage2D(GL_TEXTURE_2D, 0, bitmap, 0);
+        } else {
+            GLUtils.texSubImage2D(GL_TEXTURE_2D, 0, 0, 0, bitmap);
+        }
         bitmap.recycle();
     }
 
