@@ -92,9 +92,10 @@ public class Sprite {
 
     void onDrawFrame() {
         if (textureType == TextureType.PNG && png != null && !png.isRecycled()) {
+            boolean textureSizeChanged = imgWidth != png.getWidth() || imgHeight != png.getHeight();
             imgWidth = png.getWidth();
             imgHeight = png.getHeight();
-            GLUtil.setBitmap2Texture2d(0, png);
+            GLUtil.setBitmap2Texture2d(0, png, !textureSizeChanged);
         } else if (textureType == TextureType.ETC1 && etc1 != null) {
             imgWidth = etc1.getWidth();
             imgHeight = etc1.getHeight() / 2;
