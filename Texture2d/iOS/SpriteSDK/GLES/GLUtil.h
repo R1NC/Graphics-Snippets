@@ -21,4 +21,8 @@
 
 +(void)releaseTexture:(GLKTextureInfo*)texture;
 
++ (void)downloadImageFromTexture:(GLuint)texId size:(CGSize)size usePBO:(BOOL)usePBO completion:(void(^)(UIImage* img))completion;
+
++ (void)downloadPixelsFromTexture:(GLuint)texId size:(CGSize)size usePBO:(BOOL)usePBO completion:(void(^)(GLubyte *pixels))completion;
+
 @end
