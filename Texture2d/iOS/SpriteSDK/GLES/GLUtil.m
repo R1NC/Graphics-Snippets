@@ -126,4 +126,63 @@
     return shader;
 }
 
+
+- (void)downloadImageFromTexture:(GLuint)texId size:(CGSize)size usePBO:(BOOL)usePBO completion:(void(^)(UIImage* img))completion {
+    [self downloadPixelsFromTexture:texId size:size usePBO:usePBO completion:^(GLubyte *pixels) {
+        if (completion) {
+            UIImage* img;
+            if (pixels) {
+                CGColorSpaceRef colorSpaceRef = CGColorSpaceCreateDeviceRGB();
+                CGContextRef cgContextRef = CGBitmapContextCreate(pixels, size.width, size.height,
+                                                                 8, (int)size.width * 4,
+                                                                 colorSpaceRef,
+                                                                 kCGImageAlphaPremultipliedLast);
+                CGImageRef cgImg = CGBitmapContextCreateImage(cgContextRef);
+                UIImage* uiImg = [UIImage imageWithCGImage:cgImg];
+                CGImageRelease(cgImg);
+                CFRelease(cgContextRef);
+                CFRelease(colorSpaceRef);
+            }
+            completion(img);
+        }
+    }];
+}
+
+- (void)downloadPixelsFromTexture:(GLuint)texId size:(CGSize)size usePBO:(BOOL)usePBO completion:(void(^)(GLubyte *pixels))completion {
+    GLubyte* pixels;
+    NSInteger dataLen = (int)size.width * (int)size.height * 4;
+    
+    GLuint fbo;
+    glGenFramebuffers(1, &fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texId, 0);
+    
+    GLuint pbo;
+    if (usePBO) {
+        glGenBuffers(1, &pbo);
+        glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo);
+        glBufferData(GL_PIXEL_PACK_BUFFER, dataLen, 0, GL_STREAM_READ);
+    }
+    
+    if (usePBO) {
+        glReadPixels(0, 0, size.width, size.height, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+        pixels = glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, dataLen, GL_MAP_READ_BIT);
+    } else {
+        pixels = malloc(dataLen);
+        glReadPixels(0, 0, size.width, size.height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+    }
+    
+    if (completion) completion(pixels);
+    
+    if (usePBO) {
+        glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
+        glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+        glDeleteBuffers(1, &pbo);
+    }
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glDeleteFramebuffers(1, &fbo);
+    
+    if (pixels) free(pixels);
+}
+
 @end
