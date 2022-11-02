@@ -7,6 +7,8 @@
 //
 
 #import "GLUtil.h"
+#import <OpenGLES/ES3/gl.h>
+#import <OpenGLES/ES3/glext.h>
 
 @implementation GLUtil
 
@@ -40,7 +42,7 @@
     }
 }
 
-/*+(GLuint)textureWithImage:(UIImage*)image {
++(GLuint)textureWithImage:(UIImage*)image {
     CGImageRef cgImage = image.CGImage;
     if (!cgImage) {
         return -1;
@@ -77,7 +79,7 @@
     free(data);
     
     return texture;
-}*/
+}
 
 +(GLuint)loadVertexGLSL:(NSString*)vertextGLSL fragmentGLSL:(NSString*)fragmentGLSL {
     GLuint vertexShader = [self compileGLSL:vertextGLSL type:GL_VERTEX_SHADER];
@@ -127,7 +129,7 @@
 }
 
 
-- (void)downloadImageFromTexture:(GLuint)texId size:(CGSize)size usePBO:(BOOL)usePBO completion:(void(^)(UIImage* img))completion {
++ (void)downloadImageFromTexture:(GLuint)texId size:(CGSize)size usePBO:(BOOL)usePBO completion:(void(^)(UIImage* img))completion {
     [self downloadPixelsFromTexture:texId size:size usePBO:usePBO completion:^(GLubyte *pixels) {
         if (completion) {
             UIImage* img;
@@ -148,7 +150,7 @@
     }];
 }
 
-- (void)downloadPixelsFromTexture:(GLuint)texId size:(CGSize)size usePBO:(BOOL)usePBO completion:(void(^)(GLubyte *pixels))completion {
++ (void)downloadPixelsFromTexture:(GLuint)texId size:(CGSize)size usePBO:(BOOL)usePBO completion:(void(^)(GLubyte *pixels))completion {
     GLubyte* pixels;
     NSInteger dataLen = (int)size.width * (int)size.height * 4;
     
