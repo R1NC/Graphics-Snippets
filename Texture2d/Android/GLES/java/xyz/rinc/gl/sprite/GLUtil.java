@@ -85,7 +85,7 @@ public class GLUtil {
     }
 
     // [GL_TEXTURE0,GL_TEXTURE31]
-    public static void setBitmap2Texture2d(int texture2dIndex, Bitmap bitmap, boolean reuse) {
+    public static void bitmap2Tex2D(int texture2dIndex, Bitmap bitmap, boolean reuse) {
         if (bitmap == null || bitmap.isRecycled() || texture2dIndex < 0 || texture2dIndex > 31) return;
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0 + texture2dIndex);
         if (!reuse) {
@@ -95,6 +95,18 @@ public class GLUtil {
         }
         bitmap.recycle();
     }
+    
+    public static void rgbyuv2Tex2D(int format, int w, int h, Buffer data, int texId, boolean reuse) {
+        if (!reuse) {
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texId);
+            GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, format, w, h, 0, format, GLES20.GL_UNSIGNED_BYTE, data);
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
+        } else {
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texId);
+            GLES20.glTexSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, 0, w, h, format, GLES20.GL_UNSIGNED_BYTE, data);
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
+        }
+}
 
     /*public static ByteBuffer loadTexturePVRTCFromAsset(String asset, AssetManager assetManager) {
         if (TextUtils.isEmpty(asset) || assetManager == null) return null;
