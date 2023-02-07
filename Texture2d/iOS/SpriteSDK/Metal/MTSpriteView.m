@@ -15,13 +15,8 @@
     return [CAMetalLayer class];
 }
 
--(CALayer*)makeBackingLayer {
-    return [CAMetalLayer layer];
-}
-
 -(instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
-        self.wantsLayer = YES; //Triggering makeBackingLayer to create a Metal Layer
         // An abstraction of GPU. Used to create buffers, textures, function libraries..
         _device = MTLCreateSystemDefaultDevice();
         
