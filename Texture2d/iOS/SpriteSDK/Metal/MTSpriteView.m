@@ -9,24 +9,27 @@
 #import "MTSpriteView.h"
 #import "MTSprite.h"
 
-@interface MTSpriteView()
-@property(nonatomic,strong) CAMetalLayer* metalLayer;
-@end
-
 @implementation MTSpriteView
+
++(Class)layerClass {
+    return [CAMetalLayer class];
+}
+
+-(CALayer*)makeBackingLayer {
+    return [CAMetalLayer layer];
+}
 
 -(instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
+        self.wantsLayer = YES; //Triggering makeBackingLayer to create a Metal Layer
         // An abstraction of GPU. Used to create buffers, textures, function libraries..
         _device = MTLCreateSystemDefaultDevice();
         
         // CAMetalLayer is a subclass of CALayer that knows how to display the contents of a Metal framebuffer.
-        _metalLayer = [CAMetalLayer layer];
-        _metalLayer.frame = self.bounds;
-        _metalLayer.opaque = NO;// Make layer transparent
-        _metalLayer.device = _device;
-        _metalLayer.pixelFormat = MTLPixelFormatBGRA8Unorm;
-        [self.layer addSublayer:_metalLayer];
+        CAMetalLayer *metalLayer = (CAMetalLayer*)self.layer;
+        metalLayer.opaque = NO;// Make layer transparent
+        metalLayer.device = _device;
+        metalLayer.pixelFormat = MTLPixelFormatBGRA8Unorm;
     }
     return self;
 }
@@ -37,7 +40,7 @@
     for (MTSprite* sprite in self.sprites) {
         // In order to draw into the Metal layer, we first need to get a ‘drawable’ from the layer.
         // The drawable object manages a set of textures that are appropriate for rendering into.
-        [sprite renderDrawable:[_metalLayer nextDrawable] inRect:rect];
+        [sprite renderDrawable:[(CAMetalLayer*)self.layer nextDrawable] inRect:rect];
     }
 }
 
