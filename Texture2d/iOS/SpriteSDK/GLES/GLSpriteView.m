@@ -11,7 +11,6 @@
 
 @interface GLSpriteView()
 
-@property(nonatomic,strong) CAEAGLLayer* glLayer;
 @property(nonatomic,strong) EAGLContext* glContext;
 @property(nonatomic,assign) GLuint renderBuffer, frameBuffer, depthBuffer;
 @property(nonatomic,assign) GLint bufferWidth, bufferHeight;
@@ -20,16 +19,18 @@
 
 @implementation GLSpriteView
 
++ (Class)layerClass {
+	return [CAEAGLLayer class];
+}
+
 -(instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
         _glContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
         [EAGLContext setCurrentContext:_glContext];
         
-        _glLayer = [CAEAGLLayer layer];
-        _glLayer.frame = self.bounds;
-        _glLayer.opaque = NO;// Make layer transparent
-        _glLayer.drawableProperties = @{kEAGLDrawablePropertyRetainedBacking:@NO, kEAGLDrawablePropertyColorFormat: kEAGLColorFormatRGBA8};
-        [self.layer addSublayer:_glLayer];
+        CAEAGLLayer *glLayer = [CAEAGLLayer layer];
+        glLayer.opaque = NO;// Make layer transparent
+        glLayer.drawableProperties = @{kEAGLDrawablePropertyRetainedBacking:@NO, kEAGLDrawablePropertyColorFormat: kEAGLColorFormatRGBA8};
         
         [self prepareBuffers];
     }
@@ -69,7 +70,7 @@
     glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
     glBindRenderbuffer(GL_RENDERBUFFER, _renderBuffer);
     
-    [_glContext renderbufferStorage:GL_RENDERBUFFER fromDrawable:_glLayer];
+    [_glContext renderbufferStorage:GL_RENDERBUFFER fromDrawable:(CAEAGLLayer*)self.layer];
     
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, _renderBuffer);
     
