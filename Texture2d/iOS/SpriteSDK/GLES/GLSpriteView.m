@@ -19,7 +19,7 @@
 
 @implementation GLSpriteView
 
-+ (Class)layerClass {
++(Class)layerClass {
 	return [CAEAGLLayer class];
 }
 
@@ -28,7 +28,7 @@
         _glContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
         [EAGLContext setCurrentContext:_glContext];
         
-        CAEAGLLayer *glLayer = [CAEAGLLayer layer];
+        CAEAGLLayer *glLayer = (CAEAGLLayer*)self.layer;
         glLayer.opaque = NO;// Make layer transparent
         glLayer.drawableProperties = @{kEAGLDrawablePropertyRetainedBacking:@NO, kEAGLDrawablePropertyColorFormat: kEAGLColorFormatRGBA8};
         
