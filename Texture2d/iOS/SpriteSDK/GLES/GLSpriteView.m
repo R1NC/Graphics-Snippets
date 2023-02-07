@@ -20,7 +20,11 @@
 @implementation GLSpriteView
 
 +(Class)layerClass {
-	return [CAEAGLLayer class];
+    return [CAEAGLLayer class];
+}
+
+-(CAEAGLLayer*)glLayer {
+    return (CAEAGLLayer*)self.layer;
 }
 
 -(instancetype)initWithFrame:(CGRect)frame {
@@ -28,9 +32,8 @@
         _glContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
         [EAGLContext setCurrentContext:_glContext];
         
-        CAEAGLLayer *glLayer = (CAEAGLLayer*)self.layer;
-        glLayer.opaque = NO;// Make layer transparent
-        glLayer.drawableProperties = @{kEAGLDrawablePropertyRetainedBacking:@NO, kEAGLDrawablePropertyColorFormat: kEAGLColorFormatRGBA8};
+        self.glLayer.opaque = NO;// Make layer transparent
+        self.glLayer.drawableProperties = @{kEAGLDrawablePropertyRetainedBacking:@NO, kEAGLDrawablePropertyColorFormat: kEAGLColorFormatRGBA8};
         
         [self prepareBuffers];
     }
@@ -70,7 +73,7 @@
     glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
     glBindRenderbuffer(GL_RENDERBUFFER, _renderBuffer);
     
-    [_glContext renderbufferStorage:GL_RENDERBUFFER fromDrawable:(CAEAGLLayer*)self.layer];
+    [_glContext renderbufferStorage:GL_RENDERBUFFER fromDrawable:self.glLayer];
     
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, _renderBuffer);
     
