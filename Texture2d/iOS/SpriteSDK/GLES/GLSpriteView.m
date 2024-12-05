@@ -12,8 +12,9 @@
 @interface GLSpriteView()
 
 @property(nonatomic,strong) EAGLContext* glContext;
-@property(nonatomic,assign) GLuint renderBuffer, frameBuffer, depthBuffer;
+@property(nonatomic,assign) GLuint frameBuffer, colorRenderBuffer, depthRenderBuffer;
 @property(nonatomic,assign) GLint bufferWidth, bufferHeight;
+@property (nonatomic, strong) CADisplayLink *displayLink;
 
 @end
 
@@ -31,18 +32,21 @@
     if (self = [super initWithFrame:frame]) {
         _glContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
         [EAGLContext setCurrentContext:_glContext];
-        
+
+        _bufferWidth = frame.size.width * self.contentScaleFactor;
+        _bufferHeight = frame.size.height * self.contentScaleFactor;
         self.glLayer.opaque = NO;// Make layer transparent
         self.glLayer.drawableProperties = @{kEAGLDrawablePropertyRetainedBacking:@NO, kEAGLDrawablePropertyColorFormat: kEAGLColorFormatRGBA8};
         
         [self prepareBuffers];
+
+        _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(onRender)];
+        [_displayLink addToRunLoop:NSRunLoop.mainRunLoop forMode:NSRunLoopCommonModes];
     }
     return self;
 }
 
--(void)drawRect:(CGRect)rect {
-    [super drawRect:rect];
-    
+-(void)onRender {
     [EAGLContext setCurrentContext:_glContext];
     
     glViewport(0, 0, _bufferWidth, _bufferHeight);
@@ -55,7 +59,7 @@
         [sprite drawInRect:rect];
     }
     
-    glBindRenderbuffer(GL_RENDERBUFFER, _renderBuffer);
+    glBindRenderbuffer(GL_RENDERBUFFER, _colorRenderBuffer);
     [_glContext presentRenderbuffer:GL_RENDERBUFFER];
 }
 
@@ -68,22 +72,19 @@
 
 -(void)prepareBuffers {
     glGenFramebuffers(1, &_frameBuffer);
-    glGenRenderbuffers(1, &_renderBuffer);
-    
     glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
-    glBindRenderbuffer(GL_RENDERBUFFER, _renderBuffer);
+    
+    glGenRenderbuffers(1, &_colorRenderBuffer);
+    glBindRenderbuffer(GL_RENDERBUFFER, _colorRenderBuffer);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, _bufferWidth, _bufferHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, _colorRenderBuffer);
     
     [_glContext renderbufferStorage:GL_RENDERBUFFER fromDrawable:self.glLayer];
     
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, _renderBuffer);
-    
-    glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &_bufferWidth);
-    glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &_bufferHeight);
-    
-    glGenRenderbuffers(1, &_depthBuffer);
-    glBindRenderbuffer(GL_RENDERBUFFER, _depthBuffer);
+    glGenRenderbuffers(1, &_depthRenderBuffer);
+    glBindRenderbuffer(GL_RENDERBUFFER, _depthRenderBuffer);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, _bufferWidth, _bufferHeight);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthBuffer);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthRenderBuffer);
 }
 
 -(void)releaseBuffers {
@@ -91,13 +92,13 @@
         glDeleteFramebuffers(1, &_frameBuffer);
         _frameBuffer = 0;
     }
-    if (_renderBuffer) {
-        glDeleteRenderbuffers(1, &_renderBuffer);
-        _renderBuffer = 0;
+    if (_colorRenderBuffer) {
+        glDeleteRenderbuffers(1, &_colorRenderBuffer);
+        _colorRenderBuffer = 0;
     }
-    if (_depthBuffer) {
-        glDeleteRenderbuffers(1, &_depthBuffer);
-        _depthBuffer = 0;
+    if (_depthRenderBuffer) {
+        glDeleteRenderbuffers(1, &_depthRenderBuffer);
+        _depthRenderBuffer = 0;
     }
 }
 
