@@ -14,6 +14,8 @@
 
 -(instancetype)initWithFrame:(CGRect)frame;
 
+-(void)onRender;
+
 -(void)onDestroy;
 
 @end
