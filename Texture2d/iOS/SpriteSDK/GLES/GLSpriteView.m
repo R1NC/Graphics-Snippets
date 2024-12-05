@@ -14,7 +14,6 @@
 @property(nonatomic,strong) EAGLContext* glContext;
 @property(nonatomic,assign) GLuint frameBuffer, colorRenderBuffer, depthRenderBuffer;
 @property(nonatomic,assign) GLint bufferWidth, bufferHeight;
-@property (nonatomic, strong) CADisplayLink *displayLink;
 
 @end
 
@@ -39,9 +38,6 @@
         self.glLayer.drawableProperties = @{kEAGLDrawablePropertyRetainedBacking:@NO, kEAGLDrawablePropertyColorFormat: kEAGLColorFormatRGBA8};
         
         [self prepareBuffers];
-
-        _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(onRender)];
-        [_displayLink addToRunLoop:NSRunLoop.mainRunLoop forMode:NSRunLoopCommonModes];
     }
     return self;
 }
