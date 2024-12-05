@@ -8,6 +8,12 @@
 
 #import "SpriteViewBase.h"
 
+@interface SpriteViewBase()
+
+@property (nonatomic, strong) CADisplayLink *displayLink;
+
+@end
+
 @implementation SpriteViewBase
 
 -(instancetype)initWithFrame:(CGRect)frame {
@@ -16,11 +22,21 @@
         self.contentScaleFactor = 1.0f;//By default, it is 2.0 for retina displays. And this will make texture only one quadrant of the screen!
         self.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0];
         self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+
+        _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(onRender)];
+        [_displayLink addToRunLoop:NSRunLoop.mainRunLoop forMode:NSRunLoopCommonModes];
     }
     return self;
 }
 
+-(void)onRender {
+}
+
 -(void)onDestroy {
+}
+
+- (void)dealloc {
+    [_displayLink invalidate];
 }
 
 @end
