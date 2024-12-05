@@ -176,7 +176,7 @@ typedef NS_ENUM(NSInteger, TextureFormat) {
 -(void)refreshSpriteView {
     __weak typeof(self) weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
-        [weakSelf.spriteView setNeedsDisplay];
+        [weakSelf.spriteView onRender];
     });
 }
 
