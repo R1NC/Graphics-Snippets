@@ -12,7 +12,7 @@
 @interface GLSpriteView()
 
 @property(nonatomic,strong) EAGLContext* glContext;
-@property(nonatomic,assign) GLuint frameBuffer, colorRenderBuffer, depthRenderBuffer;
+@property(nonatomic,assign) GLuint frameBuffer, colorRenderBuffer, depthRenderBuffer, stencilRenderBuffer;
 @property(nonatomic,assign) GLint bufferWidth, bufferHeight;
 
 @end
@@ -27,15 +27,25 @@
     return (CAEAGLLayer*)self.layer;
 }
 
+- (CGFloat)scale {
+    return UIScreen.mainScreen.scale;
+}
+
 -(instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
+        self.contentScaleFactor = self.scale;
+        
         _glContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
         [EAGLContext setCurrentContext:_glContext];
 
-        _bufferWidth = frame.size.width * self.contentScaleFactor;
-        _bufferHeight = frame.size.height * self.contentScaleFactor;
+        _bufferWidth = frame.size.width * self.scale;
+        _bufferHeight = frame.size.height * self.scale;
+        
         self.glLayer.opaque = NO;// Make layer transparent
-        self.glLayer.drawableProperties = @{kEAGLDrawablePropertyRetainedBacking:@NO, kEAGLDrawablePropertyColorFormat: kEAGLColorFormatRGBA8};
+        self.glLayer.drawableProperties = @{
+            kEAGLDrawablePropertyRetainedBacking: @NO,
+            kEAGLDrawablePropertyColorFormat: kEAGLColorFormatRGBA8
+        };
         
         [self prepareBuffers];
     }
@@ -77,10 +87,15 @@
     
     [_glContext renderbufferStorage:GL_RENDERBUFFER fromDrawable:self.glLayer];
     
-    glGenRenderbuffers(1, &_depthRenderBuffer);
-    glBindRenderbuffer(GL_RENDERBUFFER, _depthRenderBuffer);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, _bufferWidth, _bufferHeight);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthRenderBuffer);
+//    glGenRenderbuffers(1, &_depthRenderBuffer);
+//    glBindRenderbuffer(GL_RENDERBUFFER, _depthRenderBuffer);
+//    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, _bufferWidth, _bufferHeight);
+//    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthRenderBuffer);
+      
+    glGenRenderbuffers(1, &_stencilRenderBuffer);
+    glBindRenderbuffer(GL_RENDERBUFFER, _stencilRenderBuffer);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, _bufferWidth, _bufferHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _stencilRenderBuffer);
 }
 
 -(void)releaseBuffers {
@@ -92,9 +107,13 @@
         glDeleteRenderbuffers(1, &_colorRenderBuffer);
         _colorRenderBuffer = 0;
     }
-    if (_depthRenderBuffer) {
-        glDeleteRenderbuffers(1, &_depthRenderBuffer);
-        _depthRenderBuffer = 0;
+//    if (_depthRenderBuffer) {
+//        glDeleteRenderbuffers(1, &_depthRenderBuffer);
+//        _depthRenderBuffer = 0;
+//    }
+    if (_stencilRenderBuffer) {
+        glDeleteRenderbuffers(1, &_stencilRenderBuffer);
+        _stencilRenderBuffer = 0;
     }
 }
 
