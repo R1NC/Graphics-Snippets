@@ -69,6 +69,13 @@
     [_glContext presentRenderbuffer:GL_RENDERBUFFER];
 }
 
+-(void)onConfigChanged {
+    _bufferWidth = self.frame.size.width * self.scale;
+    _bufferHeight = self.frame.size.height * self.scale;
+    [self releaseBuffers];
+    [self prepareBuffers];
+}
+
 -(void)onDestroy {
     [self releaseBuffers];
     if ([EAGLContext currentContext] == _glContext) {
