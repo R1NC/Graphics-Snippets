@@ -25,11 +25,18 @@
 
         _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(onRender)];
         [_displayLink addToRunLoop:NSRunLoop.mainRunLoop forMode:NSRunLoopCommonModes];
+
+        [UIDevice.currentDevice beginGeneratingDeviceOrientationNotifications];
+        [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(onOrientationChanged:) name:UIDeviceOrientationDidChangeNotification object:UIDevice.currentDevice];
     }
     return self;
 }
 
 -(void)onRender {
+}
+
+-(void)onOrientationChanged:(NSNotification*)notify {
+    [self onConfigChanged];
 }
 
 -(void)onDestroy {
