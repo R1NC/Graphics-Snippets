@@ -14,7 +14,7 @@
 
 -(instancetype)initWithFrame:(CGRect)frame;
 
--(void)onOrientationChanged;
+-(void)onConfigChanged;
 
 -(void)onRender;
 
