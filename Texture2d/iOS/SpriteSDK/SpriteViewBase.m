@@ -43,6 +43,7 @@
 }
 
 - (void)dealloc {
+    [UIDevice.currentDevice endGeneratingDeviceOrientationNotifications];
     [_displayLink invalidate];
 }
 
