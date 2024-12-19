@@ -39,7 +39,7 @@ public class GLUtil {
     public static void makeSurfaceViewTransparent(GLSurfaceView glSurfaceView) {
         glSurfaceView.setZOrderOnTop(true);
         glSurfaceView.setEGLContextClientVersion(2);
-        glSurfaceView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
+        glSurfaceView.setEGLConfigChooser(8, 8, 8, 8, 16, 8);
         glSurfaceView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
     }
 
