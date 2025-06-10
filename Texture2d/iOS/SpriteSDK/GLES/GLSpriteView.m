@@ -54,15 +54,30 @@
 
 -(void)onRender {
     [EAGLContext setCurrentContext:_glContext];
+    if (![EAGLContext currentContext]) {
+        NSLog(@"Failed to set GL context");
+        return;
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
+    GLenum fbStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    if (fbStatus != GL_FRAMEBUFFER_COMPLETE) {
+        NSLog(@"Framebuffer's not ready: %x", fbStatus);
+        return;
+    }
     
     glViewport(0, 0, _bufferWidth, _bufferHeight);
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
-    glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
-    
     for (GLSprite* sprite in self.sprites) {
         [sprite drawInRect:rect];
+        
+        GLenum err = glGetError();
+        if (err != GL_NO_ERROR) {
+            NSLog(@"GL Error: %x", err);
+            return;
+        }
     }
     
     glBindRenderbuffer(GL_RENDERBUFFER, _colorRenderBuffer);
