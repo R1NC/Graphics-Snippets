@@ -20,4 +20,4 @@ gradlew.bat linguist-generated
 proguard-rules.pro linguist-generated
 build.gradle.kts linguist-generated
 
-Sprite/**/* linguist-vendored
+**/Sprite/**/* linguist-vendored
